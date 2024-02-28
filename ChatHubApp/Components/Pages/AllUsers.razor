@@ -1,0 +1,77 @@
+﻿@page "/allUsers"
+@layout HomeLayout
+
+<style>
+    p{
+        margin:0;
+    }
+
+    .content {
+         padding-top: 0; 
+    }
+
+    .button-response{
+        border-radius: 5px;
+        height: max-content;
+        padding: 5px;
+        color:white
+    }
+</style>
+
+<div class="container p-0">
+
+    @* header *@
+    <div  style="background-color:#7196FF;padding:9px;" >
+        <div class="d-flex justify-content-between align-items-center" style="color:white;font-size:22px;" >
+
+            <p class="ms-3"> Aspire Chat</p>
+            <div class="d-flex">
+                <i class="fa fa-camera me-3" aria-hidden="true"></i>
+               
+            </div>
+        </div>
+     </div>
+     
+        @if(@isBusy){
+            <div class="d-flex justify-content-center mt-3">
+                <div class="spinner-border"  style="color:#7196FF" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+            
+        }
+        else{
+    @foreach(var item in users)
+    {
+       
+            <div class="mx-3 p-2" style="border-radius:5px;">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex  align-items-center">
+                        <img src=".\imagePlace.jpg" style="border-radius:50%;height:40px" />
+                        <div class="ms-2">
+                            <p style="font-size:16px;">@item.Name</p>
+                            <p style="font-size:14px;color:	#999999;">@item.PhoneNumber</p>
+                        </div>
+                    </div>
+                    @if(item.FriendStatus == "Pending")
+                    {
+                    <div class="button-response" style="background-color:#347C2B;">
+                        <p>Sent</p>
+                    </div>
+                    }
+                    else if (item.FriendStatus != "Accepted")
+                    {
+                    <div class="button-response" @onclick="()=>SendRequest(item)" style="background-color:#7196FF;">
+                              <p>Send</p>
+                            </div>
+                    }
+                    
+
+                </div>
+                </div>
+
+        
+    }
+    }
+    
+</div>

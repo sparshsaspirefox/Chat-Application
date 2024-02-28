@@ -1,0 +1,125 @@
+﻿@page "/individualChat/{UserId}/{UnreadMessages:int}"
+<style>
+    p{
+        margin:0;
+    }
+
+    .content {
+        padding-top: 0;
+    }
+</style>
+
+<script>
+
+    window.onscroll = function () { uploadData() };
+
+
+        funtion uploadData(){
+        document.getElementById("myP").ht = "test";
+    }
+
+</script>
+
+<div class="container p-0" style="height:100%">
+
+    <!--header -->
+    <div style="background-color:#7196FF;padding:5px;position:fixed;top:0px;width:100%;">
+        <p id="myP"></p>
+        <div class="d-flex justify-content-between align-items-center px-2" style="color:white;font-size:20px;">
+            <div class="d-flex align-items-center">
+                <i class="fa fa-angle-left" @onclick="GoBack" style="font-size:34px;" aria-hidden="true"></i>
+                <img src=".\imagePlace.jpg" class="ms-3" style="border-radius:50%;height:35px" />
+                <p class="ms-3">@currentUser.Name</p>
+            </div>
+
+           @*  <i class="fa fa-phone" style="color:green" aria-hidden="true"></i> *@
+        </div>
+    </div>
+    
+            <!-- middle -->
+
+     @if(@isBusy){
+            <div class="d-flex justify-content-center" style="margin-top:50px;">
+                <div class="spinner-border"  style="color:#7196FF" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+
+    }
+    else{
+
+        <div class="py-5 px-2" >
+            <div class="d-flex justify-content-center ">
+                @if (!noMoreData)
+                {
+                    @if (isLoadingMore)
+                    {
+
+                        <div class="spinner-border" style="color:#7196FF" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+
+                    }
+                    else
+                    {
+                        <button @onclick="LoadMoreMessages" style="font-size:12px;">Show More</button>
+                    }
+                }
+                
+            </div>
+
+                @for (int i =0;i<allMessages.Count;i++)
+                {
+                    if (UnreadMessages == allMessages.Count - i)
+                    {
+                        <div style="background-color:#F5F5F5;border-radius:7px;max-width:fit-content;margin:auto;padding:1px 3px;">
+                            <p style="font-size:13px;" >New Messages</p>
+
+                            </div>
+                    }
+           
+                    <div style="display: flex; justify-content: @((allMessages[i].SenderId == UserId) ? "flex-start" : "flex-end");padding:1px;">
+                        @if (allMessages[i].SenderId == UserId)
+                        {
+                            <div style="background-color:#F2F2F2; border-radius:8px; max-width:70%;">
+                                <p style="color:black; padding: 5px;">@allMessages[i].Content <span style="font-size:10px;">@allMessages[i].Time.ToString("hh:mm tt")</span></p>
+                            </div>
+                        }
+                        else
+                        {
+                            <div style="background-color:#7196FF; border-radius:8px; max-width:70%;">
+                                <p style="color:white; padding: 5px;">@allMessages[i].Content <span style="font-size:10px;">@allMessages[i].Time.ToString("hh:mm tt")</span></p>
+                            </div>
+                        }
+                    </div>
+                    if (UnSeenMessagesCount == allMessages.Count - i-1)
+                    {
+                        @*  <div style="background-color:#F5F5F5;border-radius:7px;max-width:fit-content;margin:auto;padding:1px 3px;"> *@
+                        <div class="d-flex justify-content-end">
+                            <p style="font-size:13px;">Seen</p>
+
+                        </div>
+
+                        @* </div> *@
+                    }
+                }
+              
+                <div style="height:30px;"></div>
+            </div>
+            }
+    <!-- bottom-->
+    <div style="position:fixed; bottom:0;width:100%;background-color:white;">
+        <form onsubmit="@SendMessage" style="max-width: 90%;margin:auto;padding-bottom:5px;">
+            <div class="d-flex justify-content-center">
+                <div class="form-group" style="width: 100%;">
+                    <input type="text" class="form-control" id="exampleInputEmail1" @bind="newMessage.Content" aria-describedby="emailHelp" placeholder="Enter Message" style="width: 100%;">
+                </div>
+                <button type="submit" class="btn" style="background-color:#7196FF;color:White"> <i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+            </div>
+        </form>
+        </div>
+
+   
+</div>
+
+

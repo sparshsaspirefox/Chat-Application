@@ -1,0 +1,93 @@
+﻿@page "/"
+
+<style>
+    p{
+        margin:0;
+    }
+      .custom-border {
+        border: 1px solid #E8E9EB;
+        border-radius: 13px;
+        background-color: White;
+        box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.45);
+        padding: 5px 15px;
+        margin: 20px 0 0 0
+    }
+    .custom-input {
+        margin-left: 8px;
+        border: 0px;
+        outline: none;
+        width: 100%;
+    }
+
+    i {
+        width: 10px;
+        font-size: 18px;
+    }
+
+    .custom-input:focus {
+        border: 0px;
+        outline: none;
+    }
+
+    .validation-error {
+        font-size: 14px;
+        color: red;
+    }
+</style>
+
+<div class="container">
+    <div class="" style="margin-top:40px;">
+
+
+
+        <div style="max-width:90%;margin:auto;">
+            <p style="text-align:center;font-size:32px;"><b>Chat</b><i class="fa fa-paper-plane-o" style="color:#7196FF" aria-hidden="true"></i></p>
+            <p style="text-align:center;font-size:22px;margin-bottom:30px;margin-top:40px;color:#7196FF;"><b>Login</b></p>
+            <EditForm Model="userViewModel" OnValidSubmit="LoginUser">
+                  <DataAnnotationsValidator />
+                 <div class="mb-3">
+            <div class="custom-border">
+                <div class="d-flex align-items-center">
+                    <i class="fa fa-mobile" aria-hidden="true"></i>
+                    <input type="text" class="custom-input" id="name" @bind="userViewModel.PhoneNumber" placeholder="Enter mobile number" aria-describedby="emailHelp">
+                </div>
+            </div>
+            <ValidationMessage class="validation-error" For="@(() => userViewModel.PhoneNumber)" />
+            
+        </div>
+        <div class="mb-3">
+            <div class="custom-border">
+                <div class="d-flex align-items-center">
+                    <i class="fa fa-key" aria-hidden="true"></i>
+                    <input type="password" class="custom-input" id="password" @bind="userViewModel.Password" placeholder="Enter password" aria-describedby="emailHelp">
+                </div>
+            </div>
+            <ValidationMessage class="validation-error" For="@(() => userViewModel.Password)" />
+        </div>
+                <p style="color:red">@errorMessage</p>
+                
+        @if(@isBusy){
+            <div class="d-flex justify-content-center">
+                <div class="spinner-border"  style="color:#7196FF" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+            
+        }
+        else{
+                <button type="submit" style="background-color:#7196FF;border-radius:8px;padding:5px;border:0px;width:100%;color:white">Login</button>
+        }
+            </EditForm>
+            
+
+
+          
+        </div>
+        <div class="d-flex justify-content-center mt-2">
+            <p @onclick="GoToRegister" style="max-width:90%;margin:auto;font-size:14px;">Don't not have account? <span style="color:#7196FF">Register</span></p>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,81 @@
+﻿@inherits LayoutComponentBase
+
+<style>
+    p{
+        margin:0;
+    }
+
+    .bottom-tabs .tab-item.active {
+        color: #7196FF; /* Change to your desired active text color */
+    }
+
+    .bottom-tabs .tab-item{
+        width:25%;
+        text-align:center;
+    }
+
+    i{
+        font-size:18px;
+    }
+
+    
+</style>
+<div class="page">
+    <main>
+        <article class="content">
+            @Body
+        </article>
+    </main>
+
+    <div class="bottom-tabs p-3" style="position: fixed; bottom: 0; width: 100%;">
+        <div class="d-flex justify-content-between" style="width: 100%;">
+
+            <div  @onclick="() => navigateToChats()" class="@((activeTab == "chats") ? "tab-item active" : "tab-item")">
+                <i class="fa fa-comments-o" aria-hidden="true"></i>
+                <p style="font-size:14px;">Chats</p>
+            </div>
+            <div @onclick="() => navigateToAllUsers()" class="@((activeTab == "allUsers") ? "tab-item active" : "tab-item")">
+                <i class="fa fa-users" aria-hidden="true"></i>
+                <p style="font-size:14px;">Peoples</p>
+            </div>
+            <div  @onclick="() => navigateToStatus()" class="@((activeTab == "status") ? "tab-item active" : "tab-item")">
+                <i class="fa fa-circle-o-notch" aria-hidden="true"></i>
+                <p style="font-size:14px;">Status</p>
+            </div>
+            <div @onclick="() => navigateToCalls()" class="@((activeTab == "calls") ? "tab-item active" : "tab-item")">
+                <i class="fa fa-phone"  aria-hidden="true"></i>
+                <p style="font-size:14px;">Calls</p>
+            </div>
+            
+           
+        </div>
+    </div>
+</div>
+
+@code{
+    public string activeTab = "chats";
+
+    [Inject]
+    NavigationManager _navigationManager{ get; set; }
+    private void navigateToChats()
+    {
+        _navigationManager.NavigateTo("/chats");
+        activeTab = "chats";
+    }
+
+    private void navigateToAllUsers()
+    {
+        _navigationManager.NavigateTo("/allUsers");
+        activeTab = "allUsers";
+    }
+    private void navigateToStatus()
+    {
+        _navigationManager.NavigateTo("/status");
+        activeTab = "status";
+    }
+    private void navigateToCalls()
+    {
+        _navigationManager.NavigateTo("/call");
+        activeTab = "calls";
+    }
+}
