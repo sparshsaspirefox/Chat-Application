@@ -10,6 +10,7 @@ namespace ChatHubApp.Services.Account
 {
     public interface IAccountService
     {
+        public Task<GenericResponse<string>> UploadProfileImage(MultipartFormDataContent content);
         public Task<GenericResponse<string>> RegisterUser(UserViewModel data);
 
         public Task<GenericResponse<string>> Login(UserLoginModel data);

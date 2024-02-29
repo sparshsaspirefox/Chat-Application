@@ -9,6 +9,8 @@ namespace ChatHubApi.Models
 
         public string PhoneNumber { get; set; }
 
+        public string? About {  get; set; }
+        public string? ImageUrl {  get; set; }
         public DateTime LastSeen { get; set; } = DateTime.Now;
     }
 }

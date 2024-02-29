@@ -3,8 +3,10 @@ using ChatHubApp.Services.Account;
 using ChatHubApp.Services.ChatHub;
 using ChatHubApp.Services.FriendShip;
 using ChatHubApp.Services.Message;
+using CommunityToolkit.Maui.Core.Platform;
 using Data.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
 using System;
@@ -62,6 +64,17 @@ namespace ChatHubApp.Components.Pages
            // await JSRuntime.InvokeVoidAsync("onScrollToTop");
 
         }
+        private ElementReference inputElementRef;
+
+        private bool isTyping = false;
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await inputElementRef.FocusAsync();
+            }
+        }
         private async Task CreateHubConnection()
         {
             
@@ -85,7 +98,33 @@ namespace ChatHubApp.Components.Pages
                 this.InvokeAsync(() => this.StateHasChanged());
 
             });
-           
+
+            _hubConnection.On<string>("ActiveChat", (loggedId) =>
+            {
+                if (loggedId == loggedUserId)
+                {
+                    UnSeenMessagesCount = 0;
+                }
+                this.InvokeAsync(() => this.StateHasChanged());
+            });
+
+            _hubConnection.On<string>("ShowTyping", (userId) =>
+            {
+                if (userId == UserId)
+                {
+                    isTyping = true;
+                }
+                this.InvokeAsync(() => this.StateHasChanged());
+            });
+            _hubConnection.On<string>("HideTyping", (userId) =>
+            {
+                if (userId == UserId)
+                {
+                    isTyping = false;
+                }
+                this.InvokeAsync(() => this.StateHasChanged());
+            });
+
         }
         int pageNo;
         private async Task IntializeList()
@@ -105,6 +144,7 @@ namespace ChatHubApp.Components.Pages
             }
 
             await _hubConnection.SendAsync("UpdateSeenMessages", loggedUserId, UserId);
+            await _hubConnection.SendAsync("AddActiveChats", loggedUserId, UserId);
 
             var userResponse = await _accountService.GetUserById(UserId);
             currentUser = userResponse.Data;
@@ -123,11 +163,35 @@ namespace ChatHubApp.Components.Pages
 
             await ScrollToBottom();
         }
+        string bottomHeight = "30px";
+        private async Task UpdateUIOnKeyboardOpen()
+        {
+            bottomHeight = "120px";
+            await ScrollToBottom();
+        }
 
-        
+        string sendInputId = "sendMsgInput";
 
+        private async Task KeyBoardFunction()
+        {
+            //bool abc = KeyboardExtensions.IsSoftKeyboardShowing(sendInputId);
+        }
+
+        private async Task KeyboardEventHandler()
+        {
+            await _hubConnection.SendAsync("ShowTyping", loggedUserId, UserId);
+        }
+        private async Task OnUnfocusOnInput()
+        {
+            await _hubConnection.SendAsync("HideTyping", loggedUserId, UserId);
+        }
+        private async Task GoToProfile()
+        {
+            navigationManager.NavigateTo($"profilePage/{UserId}");
+        }
         private async Task SendMessage()
         {
+           
             if (string.IsNullOrEmpty(newMessage.Content))
             {
                 return;
@@ -137,10 +201,12 @@ namespace ChatHubApp.Components.Pages
                 newMessage.ReceiverId = this.UserId;
                 newMessage.SenderId = loggedUserId;
                 newMessage.Time = DateTime.Now;
+                allMessages.Add(newMessage);
+              
+
                 await _messageService.NewMessage(newMessage);
                 await _friendService.UpdateMessageCount(newMessage.SenderId, newMessage.ReceiverId, true);
                
-                allMessages.Add(newMessage);
                 UnreadMessages = 0; 
                 UnSeenMessagesCount++;
                 await ScrollToBottom();
@@ -149,6 +215,7 @@ namespace ChatHubApp.Components.Pages
                     
                     await _hubConnection.SendAsync("SendMessage", newMessage);
                     await _hubConnection.SendAsync("UpdateMessageCount", newMessage.SenderId,newMessage.ReceiverId);
+                    await _hubConnection.SendAsync("IsChatActive", newMessage.SenderId, newMessage.ReceiverId);
                 }
                 newMessage = new MessageViewModel();
             }
@@ -156,6 +223,8 @@ namespace ChatHubApp.Components.Pages
             {
                 string error = ex.Message;
             }
+            
+
         }
         private bool noMoreData = false;
         private async Task LoadMoreMessages()
@@ -178,6 +247,7 @@ namespace ChatHubApp.Components.Pages
 
         private async Task GoBack()
         {
+            await _hubConnection.SendAsync("RemoveActiveChats", loggedUserId, UserId);
             await _friendService.UpdateMessageCount(UserId, loggedUserId, false);
             await JSRuntime.InvokeVoidAsync("goBack");
         }
@@ -188,13 +258,7 @@ namespace ChatHubApp.Components.Pages
         }
 
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                
-            }
-        }
+       
 
         // Method to be called when the user scrolls to the top
         [JSInvokable]

@@ -33,7 +33,8 @@ namespace ChatHubApp
             builder.Services.AddTransient<INotificationService, NotificationService>();
             builder.Services.AddTransient<IFriendService, FriendService>();
             builder.Services.AddSingleton<IChatHubService, ChatHubService>();
-
+            builder.Services.AddSingleton<IChatHubService, ChatHubService>();
+            
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

@@ -40,7 +40,15 @@ namespace ChatHubApi.Services.FriendRequest
         public async Task<int> GetUnReadMessageCount(string senderId, string friendId)
         {
             FriendShip friendShip = await _context.FriendShips.FirstOrDefaultAsync(p => p.UserId == senderId && p.FriendId == friendId);
-            return friendShip.UnReadMessagesCount;
+            if(friendShip != null)
+            {
+                return friendShip.UnReadMessagesCount;
+
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 }

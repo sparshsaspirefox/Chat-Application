@@ -98,5 +98,19 @@ namespace ChatHubApp.Services.Account
                 return new GenericResponse<string> { Success = false, Error = ex.Message };
             }
         }
+
+        //have to modify
+        public async Task<GenericResponse<string>> UploadProfileImage(MultipartFormDataContent content)
+        {
+            try
+            {
+                var response = await _apiManager.PostAsync<GenericResponse<string>>(AppConstants.baseAddress + "/File/UpdateLastSeen?UserId=" ,content);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new GenericResponse<string> { Success = false, Error = ex.Message };
+            }
+        }
     }
 }

@@ -27,9 +27,17 @@
         <p id="myP"></p>
         <div class="d-flex justify-content-between align-items-center px-2" style="color:white;font-size:20px;">
             <div class="d-flex align-items-center">
-                <i class="fa fa-angle-left" @onclick="GoBack" style="font-size:34px;" aria-hidden="true"></i>
-                <img src=".\imagePlace.jpg" class="ms-3" style="border-radius:50%;height:35px" />
-                <p class="ms-3">@currentUser.Name</p>
+                <div class="d-flex align-items-center" @onclick="GoBack">
+                    <i class="fa fa-angle-left"  style="font-size:34px;" aria-hidden="true"></i>
+                    <img src=".\imagePlace.jpg" class="ms-3" style="border-radius:50%;height:35px" />
+                </div>
+                <div class="ms-3">
+                    <p  @onclick="GoToProfile">@currentUser.Name</p>
+                    @if (isTyping)
+                    {
+                        <p style="color:green;font-size:12px;margin-top:-4px;">Typing</p>
+                    }
+                </div>
             </div>
 
            @*  <i class="fa fa-phone" style="color:green" aria-hidden="true"></i> *@
@@ -87,24 +95,37 @@
                         }
                         else
                         {
-                            <div style="background-color:#7196FF; border-radius:8px; max-width:70%;">
-                                <p style="color:white; padding: 5px;">@allMessages[i].Content <span style="font-size:10px;">@allMessages[i].Time.ToString("hh:mm tt")</span></p>
-                            </div>
-                        }
+                            if (UnSeenMessagesCount >= allMessages.Count - i)
+                            {
+                                <div style="background-color:#7196FF; border-radius:8px; max-width:70%;">
+                                    <div class="d-flex">
+                                    <p style="color:White; padding: 5px;">@allMessages[i].Content <span style="font-size:10px;">@allMessages[i].Time.ToString("hh:mm tt")</span></p>
+                                        <div style="color:#bbbbbb;font-size:11px;" class="d-flex flex-column">
+                                        <i class="fa fa-check" style="margin-top: 10px;margin-right: 2px;" aria-hidden="true"></i>
+                                            <i class="fa fa-check" style="margin-top:-6px;" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div style="background-color:#7196FF; border-radius:8px; max-width:70%;">
+                                    <div class="d-flex">
+                                    <p style="color:White; padding: 5px;">@allMessages[i].Content <span style="font-size:10px;">@allMessages[i].Time.ToString("hh:mm tt")</span></p>
+                                    <div style="color:White;font-size:11px;" class="d-flex flex-column">
+                                        <i class="fa fa-check" style="margin-top: 10px;margin-right: 2px;" aria-hidden="true"></i>
+                                        <i class="fa fa-check" style="margin-top:-6px;" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                           }
+                        
                     </div>
-                    if (UnSeenMessagesCount == allMessages.Count - i-1)
-                    {
-                        @*  <div style="background-color:#F5F5F5;border-radius:7px;max-width:fit-content;margin:auto;padding:1px 3px;"> *@
-                        <div class="d-flex justify-content-end">
-                            <p style="font-size:13px;">Seen</p>
-
-                        </div>
-
-                        @* </div> *@
-                    }
+                   
                 }
               
-                <div style="height:30px;"></div>
+                <div style="height:@bottomHeight;"></div>
             </div>
             }
     <!-- bottom-->
@@ -112,9 +133,9 @@
         <form onsubmit="@SendMessage" style="max-width: 90%;margin:auto;padding-bottom:5px;">
             <div class="d-flex justify-content-center">
                 <div class="form-group" style="width: 100%;">
-                    <input type="text" class="form-control" id="exampleInputEmail1" @bind="newMessage.Content" aria-describedby="emailHelp" placeholder="Enter Message" style="width: 100%;">
+                    <input type="text" @ref="inputElementRef" @onblur="OnUnfocusOnInput" class="form-control" id="sendMsgInput" @oninput="KeyboardEventHandler" @bind-value="newMessage.Content" aria-describedby="emailHelp" placeholder="Enter Message" style="width: 100%;">
                 </div>
-                <button type="submit" class="btn" style="background-color:#7196FF;color:White"> <i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+                <button type="submit"  class="btn" style="background-color:#7196FF;color:White"> <i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
             </div>
         </form>
         </div>

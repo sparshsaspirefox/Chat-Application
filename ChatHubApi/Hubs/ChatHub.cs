@@ -1,15 +1,13 @@
 ﻿using Data.Models;
+using ChatHubApi.Hubs.HubModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
 
 namespace ChatHubApi.Hubs
 {
-    public class ConnectedUser
-    {
-        public string UserId { get; set; }
-        public string ConnnectionId { get; set; }
-    }
+   
+    
 
     [Authorize(AuthenticationSchemes = "Bearer")]
     public class ChatHub:Hub
@@ -77,6 +75,26 @@ namespace ChatHubApi.Hubs
             }
         }
 
+        public async Task ShowTyping(string userId, string friendId)
+        {
+            ConnectedChat connectedChat = ConnectedChats.FirstOrDefault(p => p.UserId == friendId && p.FriendId == userId);
+            ConnectedUser connectedUser = ConnectedUsers.FirstOrDefault(u => u.UserId == friendId);
+            if (connectedChat != null)
+            {
+                await Clients.Client(connectedUser.ConnnectionId).SendAsync("ShowTyping", userId);
+            }
+        }
+
+        public async Task HideTyping(string userId, string friendId)
+        {
+            ConnectedChat connectedChat = ConnectedChats.FirstOrDefault(p => p.UserId == friendId && p.FriendId == userId);
+            ConnectedUser connectedUser = ConnectedUsers.FirstOrDefault(u => u.UserId == friendId);
+            if (connectedChat != null)
+            {
+                await Clients.Client(connectedUser.ConnnectionId).SendAsync("HideTyping", userId);
+            }
+        }
+
         public async Task UpdateSeenMessages(string SenderId, string ReceiverId)
         {
             try
@@ -91,6 +109,35 @@ namespace ChatHubApi.Hubs
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+            }
+        }
+
+
+        //connected chats
+
+        static List<ConnectedChat> ConnectedChats = new List<ConnectedChat>();
+        public async Task AddActiveChats(string userId,string friendId)
+        {
+            ConnectedChats.Add(new ConnectedChat() { UserId = userId,FriendId = friendId});
+        }
+
+        public async Task RemoveActiveChats(string userId,string friendId)
+        {
+            ConnectedChat connectedChat = ConnectedChats.FirstOrDefault(p=> p.UserId == userId && p.FriendId == friendId);
+            if(connectedChat != null)
+            {
+                ConnectedChats.Remove(connectedChat);
+            }
+        }
+
+        public async Task IsChatActive(string userId, string friendId)
+        {
+            //swap the ids beacuse we want to check did another person also open the chat?
+            ConnectedChat connectedChat = ConnectedChats.FirstOrDefault(p => p.UserId == friendId && p.FriendId == userId);
+            ConnectedUser connectedUser = ConnectedUsers.FirstOrDefault(u => u.UserId == userId);
+            if (connectedChat != null)
+            {
+                await Clients.Client(connectedUser.ConnnectionId).SendAsync("ActiveChat",userId);
             }
         }
 
@@ -121,8 +168,8 @@ namespace ChatHubApi.Hubs
             {
 
             }
-            
-
         }
+
+
     }
 }
