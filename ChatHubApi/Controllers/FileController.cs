@@ -17,10 +17,11 @@ namespace ChatHubApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> UploadImage(IFormFile image)
+        public async Task<IActionResult> File(IEnumerable<IFormFile> files)
         {
             try
             {
+                var image = Request.Form.Files[0];
                 UploadResult uploadResult = new UploadResult();
                 string trustedFileNameForFileStorage;
                 var untrustedFileName = image.FileName;
@@ -31,8 +32,12 @@ namespace ChatHubApi.Controllers
                 trustedFileNameForFileStorage = Path.GetRandomFileName();
                 var path = Path.Combine(_env.ContentRootPath, "uploads", trustedFileNameForFileStorage);
 
-                await using FileStream fs = new(path, FileMode.Create);
-                await image.CopyToAsync(fs);
+              
+
+                using (var stream = new FileStream(path, FileMode.Create))
+                {
+                    image.CopyTo(stream);
+                }
 
                 uploadResult.StoredFileName = trustedFileNameForFileStorage;
                 return Ok(new GenericResponse<UploadResult> { Success = true, Data = uploadResult });

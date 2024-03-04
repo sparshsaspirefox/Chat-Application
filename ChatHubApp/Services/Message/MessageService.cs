@@ -4,6 +4,7 @@ using Data.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +14,7 @@ namespace ChatHubApp.Services.Message
     {
         private readonly IApiManager _apiManager;
 
+    
         public MessageService(IApiManager apiManager)
         {
             _apiManager = apiManager;
@@ -56,5 +58,7 @@ namespace ChatHubApp.Services.Message
                 return new GenericResponse<List<MessageViewModel>> { Success = false, Error = ex.Message };
             }
         }
+
+       
     }
 }

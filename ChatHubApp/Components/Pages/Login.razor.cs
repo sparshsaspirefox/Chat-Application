@@ -28,6 +28,17 @@ namespace ChatHubApp.Components.Pages
 
         [Inject]
         IChatHubService chatHubService { get; set; }
+
+        protected override async Task OnInitializedAsync()
+        {
+            if (Preferences.ContainsKey("Token"))
+            {
+                //string abc = Preferences.Get("Token", null);
+                //string abc1 = Preferences.Get("UserId", null);
+                //navigationManager.NavigateTo("chats");
+            }
+        }
+        
         private async Task LoginUser()
         {
             isBusy = true;
@@ -38,10 +49,6 @@ namespace ChatHubApp.Components.Pages
             {
                 Preferences.Set("Token", response.Message);
                 Preferences.Set("UserId", response.Error);
-            
-                string abc = Preferences.Get("Token", null);
-                string abc1 = Preferences.Get("UserId", null);
-                chatHubService.CreateHubConnection();
                 navigationManager.NavigateTo("chats");
             }
             else

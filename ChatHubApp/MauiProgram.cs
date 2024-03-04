@@ -1,11 +1,15 @@
 ﻿using ChatHubApp.HttpApiManager;
 using ChatHubApp.Services.Account;
 using ChatHubApp.Services.ChatHub;
+using ChatHubApp.Services.FileUpload;
 using ChatHubApp.Services.FriendShip;
 using ChatHubApp.Services.Message;
 using ChatHubApp.Services.Notification;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using Plugin.LocalNotification;
+using Tewr.Blazor.FileReader;
+using INotificationService = ChatHubApp.Services.Notification.INotificationService;
 
 namespace ChatHubApp
 {
@@ -17,6 +21,7 @@ namespace ChatHubApp
             builder
                 .UseMauiApp<App>()
                 .UseMauiCommunityToolkit()
+                .UseLocalNotification()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
@@ -24,6 +29,7 @@ namespace ChatHubApp
 
             builder.Services.AddMauiBlazorWebView();
 
+            builder.Services.AddFileReaderService(o => o.UseWasmSharedBuffer = true);
             builder.Services.AddHttpClient();
 
             builder.Services.AddSingleton<IApiManager,ApiManager>();
@@ -34,7 +40,8 @@ namespace ChatHubApp
             builder.Services.AddTransient<IFriendService, FriendService>();
             builder.Services.AddSingleton<IChatHubService, ChatHubService>();
             builder.Services.AddSingleton<IChatHubService, ChatHubService>();
-            
+            builder.Services.AddSingleton<IFileUploadService, FileUploadService>();
+
 
 #if DEBUG
             builder.Services.AddBlazorWebViewDeveloperTools();

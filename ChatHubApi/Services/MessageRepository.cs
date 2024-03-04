@@ -28,7 +28,7 @@ namespace ChatHubApi.Services
                     ReceiverId = message.ReceiverId,
                     Time = message.Time,
                     Content = message.Content,
-
+                    ContentType = message.ContentType
                 });
             }
             return messages;

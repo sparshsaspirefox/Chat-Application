@@ -8,6 +8,8 @@ namespace ChatHubApi.Models
         public DateTime Time { get; set; }
         public string Content { get; set; }
 
+        public string ContentType {  get; set; }
+
         [ForeignKey("SenderId")]
         public virtual User Sender { get; set; }
 

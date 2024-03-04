@@ -55,7 +55,20 @@ namespace ChatHubApi.Hubs
 
         public async Task SendMessage(MessageViewModel messageViewModel)
         {
-            await Clients.All.SendAsync("ReceiveMessage",messageViewModel);
+            try
+            {
+                ConnectedUser ReceiverConn = ConnectedUsers.FirstOrDefault(u => u.UserId == messageViewModel.ReceiverId);
+                if (ReceiverConn != null)
+                {
+                    string ReceiverConnId = ReceiverConn.ConnnectionId;
+                    await Clients.Client(ReceiverConnId).SendAsync("ReceiveMessage", messageViewModel);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+           // await Clients.All.SendAsync("ReceiveMessage",messageViewModel);
         }
 
         public async Task UpdateMessageCount(string SenderId,string ReceiverId)

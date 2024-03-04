@@ -4,14 +4,19 @@ using ChatHubApp.Services.ChatHub;
 using ChatHubApp.Services.FriendShip;
 using ChatHubApp.Services.Message;
 using CommunityToolkit.Maui.Core.Platform;
+using Data.Enums;
 using Data.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.SignalR.Client;
 using Microsoft.JSInterop;
+using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Mime;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -52,6 +57,8 @@ namespace ChatHubApp.Components.Pages
         bool isBusy = false;
         bool isLoadingMore = false;
 
+        string loggedUserName = string.Empty;
+
         MessageViewModel newMessage = new MessageViewModel();
 
         List<MessageViewModel> allMessages = new List<MessageViewModel>();
@@ -87,6 +94,36 @@ namespace ChatHubApp.Components.Pages
                     allMessages.Add(message);
                     ScrollToBottom();
                     this.InvokeAsync(() => this.StateHasChanged());
+                }
+                else
+                {
+                    string description = string.Empty;
+                    if (message.ContentType == MessageType.Written.ToString())
+                    {
+                        description = message.Content;
+                    }
+                    else if (message.ContentType == MessageType.Image.ToString())
+                    {
+                        description = "New Image";
+                    }
+                    else
+                    {
+                        description = "New document";
+                    }
+
+                    var request = new NotificationRequest
+                    {
+                        NotificationId = 1000,
+                        Title = message.SenderId,
+                        Subtitle = "New Message",
+                        Description = description,
+                        BadgeNumber = 42,
+                        Schedule = new NotificationRequestSchedule
+                        {
+                            NotifyTime = DateTime.Now
+                        }
+                    };
+                    LocalNotificationCenter.Current.Show(request);
                 }
             });
             _hubConnection.On<string>("UpdateSeenMessages", (sendTo) =>
@@ -132,7 +169,8 @@ namespace ChatHubApp.Components.Pages
 
           //  isBusy = true;
             pageNo = 1;
-           
+
+          
             //var response = await _messageService.GetMessages(Preferences.Get("UserId", null), UserId);
             loggedUserId = Preferences.Get("UserId", null);
 
@@ -189,9 +227,38 @@ namespace ChatHubApp.Components.Pages
         {
             navigationManager.NavigateTo($"profilePage/{UserId}");
         }
-        private async Task SendMessage()
+        private async Task SendNewMessage()
         {
-           
+            await SendMessage();
+        }
+        private async Task UploadPdfUrl(string pdfUrl)
+        {
+            if (string.IsNullOrEmpty(pdfUrl))
+            {
+                return;
+            }
+
+            await SendMessage(pdfUrl, MessageType.Pdf);
+
+        }
+        private async Task UploadImageUrl(string imgUrl)
+        {
+            if (string.IsNullOrEmpty(imgUrl))
+            {
+                return;
+            }
+            await SendMessage(imgUrl, MessageType.Image);
+
+        }
+
+
+        private async Task SendMessage(string documentUrl = null,MessageType messageType = MessageType.Written)
+        {
+            if (!String.IsNullOrEmpty(documentUrl))
+            {
+                newMessage.Content = documentUrl;
+            }
+
             if (string.IsNullOrEmpty(newMessage.Content))
             {
                 return;
@@ -201,9 +268,8 @@ namespace ChatHubApp.Components.Pages
                 newMessage.ReceiverId = this.UserId;
                 newMessage.SenderId = loggedUserId;
                 newMessage.Time = DateTime.Now;
+                newMessage.ContentType = messageType.ToString();
                 allMessages.Add(newMessage);
-              
-
                 await _messageService.NewMessage(newMessage);
                 await _friendService.UpdateMessageCount(newMessage.SenderId, newMessage.ReceiverId, true);
                
@@ -225,6 +291,17 @@ namespace ChatHubApp.Components.Pages
             }
             
 
+        }
+
+        private async Task OpenPdf(string documentUrl)
+        {
+            string fullDocumentUrl = GetUrl(documentUrl);
+            byte[] pdfDocumentInBytes = null;
+            using (var webClient = new WebClient())
+            {
+                pdfDocumentInBytes = webClient.DownloadData(fullDocumentUrl);
+            }
+            DocumentViewer.OpenDocumentInViewer(pdfDocumentInBytes);
         }
         private bool noMoreData = false;
         private async Task LoadMoreMessages()
@@ -257,9 +334,8 @@ namespace ChatHubApp.Components.Pages
             await JSRuntime.InvokeVoidAsync("scrollToBottom");
         }
 
-
        
-
+        private string GetUrl(string url) => AppConstants.staticsFiles.ToString() + url;
         // Method to be called when the user scrolls to the top
         [JSInvokable]
         public async Task OnScrollToTop()

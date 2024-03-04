@@ -4,6 +4,7 @@ using ChatHubApp.Services.FriendShip;
 using Data.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
+using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,7 @@ namespace ChatHubApp.Components.Pages
         [Inject]
         IAccountService _accountService { get; set; }
 
-        public List<UserViewModel> users = new List<UserViewModel>();
+       // public List<UserViewModel> users = new List<UserViewModel>();
 
         public List<FriendRequestViewModel> friends = new List<FriendRequestViewModel>();
 
@@ -44,10 +45,26 @@ namespace ChatHubApp.Components.Pages
             isBusy = false;
         }
 
+        private async void ShowNotification()
+        {
+            var request = new NotificationRequest
+            {
+                NotificationId = 1000,
+                Title = "Subscribe for me",
+                Subtitle = "Hello Friends",
+                Description = "Stay Tuned",
+                BadgeNumber = 42,
+                Schedule = new NotificationRequestSchedule
+                {
+                    NotifyTime = DateTime.Now
+                }
+            };
+            LocalNotificationCenter.Current.Show(request);
+        }
+
         private async Task CreateHubConnection()
         {
-            _hubConnection = await ChatHubService.CreateHubConnection();
-
+           // _hubConnection = await ChatHubService.CreateHubConnection();
 
             _hubConnection.On<string>("UpdateMessageCount", (sendTo) =>
             {
@@ -65,12 +82,14 @@ namespace ChatHubApp.Components.Pages
 
         private async Task InitilizeList()
         {
-            GenericResponse<List<UserViewModel>> usersResponse = await _accountService.GetAllUsers();
-
             _hubConnection = await ChatHubService.CreateHubConnection();
 
+            //GenericResponse<List<UserViewModel>> usersResponse = await _accountService.GetAllUsers();
+            //users = usersResponse.Data.Where(p => p.id != currentUserId).ToList();
+
+
+
             currentUserId = Preferences.Get("UserId", null);
-            users = usersResponse.Data.Where(p => p.id != currentUserId).ToList();
 
             await _hubConnection.SendAsync("GetAllActiveUsers");
             GenericResponse<List<FriendRequestViewModel>> friendsResponse = await _friendService.GetAllFriends(currentUserId);

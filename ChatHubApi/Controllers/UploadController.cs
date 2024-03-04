@@ -10,7 +10,7 @@ namespace ChatHubApi.Controllers
     public class UploadController : ControllerBase
     {
         [HttpPost]
-        public IActionResult Upload()
+        public IActionResult Upload(IEnumerable<IFormFile> files)
         {
             try
             {
@@ -26,7 +26,7 @@ namespace ChatHubApi.Controllers
                     {
                         file.CopyTo(stream);
                     }
-                    return Ok(new GenericResponse<string> { Success = true,Data = dbPath }) ;
+                    return Ok(new GenericResponse<string> { Success = true,Message = dbPath }) ;
                 }
                 else
                 {

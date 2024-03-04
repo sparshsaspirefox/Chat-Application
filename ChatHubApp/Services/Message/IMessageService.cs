@@ -9,7 +9,7 @@ namespace ChatHubApp.Services.Message
 {
     public interface IMessageService
     {
-
+      
         Task<GenericResponse<string>> NewMessage(MessageViewModel message);
         Task<GenericResponse<List<MessageViewModel>>> GetMessages(string senderId, string receiverId);
 
