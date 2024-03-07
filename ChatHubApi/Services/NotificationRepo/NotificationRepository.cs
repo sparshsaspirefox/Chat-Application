@@ -11,15 +11,41 @@ namespace ChatHubApi.Services.NotificationRepo
         public NotificationRepository(ApplicationDbContext context) : base(context)
         {
             _context = context;
-        }
+        }        
 
-        public async Task<List<Notification>> GetAllWithSender(string receiverId, bool IsSender)
+        public async Task<List<NotificationViewModel>> GetAllWithSender(string receiverId, bool IsSender)
         {
             if(IsSender)
             {
-                return _context.Notifications.Include(m => m.Sender).Where(m => m.SenderId == receiverId).ToList();
+                return _context.Notifications.Where(m => m.SenderId == receiverId)
+                .Select(m => new NotificationViewModel
+                {
+                    NotificationId = m.NotificationId,
+                    Time = m.Time,
+                    Status = m.Status,  
+                    ReceiverId = m.ReceiverId,
+                    NotificationType= m.NotificationType,
+                    SenderName = m.Sender.Name,
+                    SenderId = m.Sender.Id,
+                    GroupName = m.Group.GroupName,
+                    GroupId = m.Group.Id
+
+                }).ToList();
             }
-            return _context.Notifications.Include(m => m.Sender).Where(m => m.ReceiverId == receiverId).ToList();
+            return _context.Notifications.Where(m => m.ReceiverId == receiverId)
+                .Select(m => new NotificationViewModel
+                {
+                    NotificationId = m.NotificationId,
+                    Time = m.Time,
+                    Status = m.Status,
+                    ReceiverId = m.ReceiverId,
+                    NotificationType = m.NotificationType,
+                    SenderName = m.Sender.Name,
+                    SenderId = m.Sender.Id,
+                    GroupName = m.Group.GroupName,
+                    GroupId = m.Group.Id
+                }).ToList();
+            
         }
 
         

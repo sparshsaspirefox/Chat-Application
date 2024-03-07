@@ -82,7 +82,8 @@ namespace ChatHubApp.Components.Pages
                 SenderId = currentUserId,
                 ReceiverId = userViewModel.id,
                 Status = RequestType.Pending.ToString(),
-                Time = DateTime.Now
+                Time = DateTime.Now,
+                NotificationType = NotificationType.FriendRequest.ToString()
             };
             _notificationService.SendNotification(newRequestNotification);
 

@@ -23,8 +23,8 @@
     <div style="background-color:#7196FF;padding:5px;position:fixed;top:0px;width:100%;">
 
         <div class="d-flex justify-content-between align-items-center px-2" style="color:white;font-size:20px;">
-            <div class="d-flex align-items-center">
-                <i class="fa fa-angle-left" @onclick="GoBack" style="font-size:34px;" aria-hidden="true"></i>
+            <div class="d-flex align-items-center" @onclick="GoBack">
+                <i class="fa fa-angle-left"  style="font-size:34px;" aria-hidden="true"></i>
                 <p class="ms-3">Notifications</p>
             </div>
 
@@ -44,33 +44,67 @@
         else{
         @foreach (var notification in allNotifications)
         {
-            if (notification.Status == RequestType.Pending.ToString())
-            {
-                <div class="d-flex justify-content-between">
-                    <div>
-                        <p><b>@notification.SenderName</b> sent you a friend request.</p>
-                        <p class="time">@notification.Time.ToString("hh:mm tt")</p>
-                    </div>
-                    <div class="d-flex">
-                        <div class="button-response" @onclick="() => AcceptRequest(notification)" style="background-color:#7196FF;">
-                            <p>Accept</p>
-                        </div>
-                        <div @onclick="() => CancelRequest(notification)" style="background-color:white;padding:0 10px;font-size:20px;">
-                            <p><i class="fa fa-times" style="color:black;font-size:20px;" aria-hidden="true"></i></p>
-                        </div>
-                     
-                        
-                    </div>
-                </div>
+                if(notification.NotificationType == NotificationType.FriendRequest.ToString())
+                {
+                    if (notification.Status == RequestType.Pending.ToString())
+                    {
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p><b>@notification.SenderName</b> sent you a friend request.</p>
+                                <p class="time">@notification.Time.ToString("HH:mm")</p>
+                            </div>
+                            <div class="d-flex">
+                                <div class="button-response" @onclick="() => AcceptRequest(notification)" style="background-color:#7196FF;">
+                                    <p>Accept</p>
+                                </div>
+                                <div @onclick="() => CancelRequest(notification)" style="background-color:white;padding:0 10px;font-size:20px;">
+                                    <p><i class="fa fa-times" style="color:black;font-size:20px;" aria-hidden="true"></i></p>
+                                </div>
 
-            }
-            else if (notification.Status == RequestType.Accepted.ToString())
-            {
-                <div>
-                    <p><b>@notification.SenderName</b> become your friend.</p>
-                    <p class="time">@notification.Time.ToString("hh:mm tt")</p>
-                </div>
-            }
+
+                            </div>
+                        </div>
+
+                    }
+                    else if (notification.Status == RequestType.Accepted.ToString())
+                    {
+                        <div>
+                            <p><b>@notification.SenderName</b> become your friend.</p>
+                            <p class="time">@notification.Time.ToString("HH:mm")</p>
+                        </div>
+                    }
+                }
+                else
+                {
+                    if (notification.Status == RequestType.Pending.ToString())
+                    {
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <p><b>@notification.SenderName</b> wants you to add to @notification.GroupName</p>
+                                <p class="time">@notification.Time.ToString("HH:mm")</p>
+                            </div>
+                            <div class="d-flex">
+                                <div class="button-response" @onclick="() => AcceptRequest(notification)" style="background-color:#7196FF;">
+                                    <p>Accept</p>
+                                </div>
+                                <div @onclick="() => CancelRequest(notification)" style="background-color:white;padding:0 10px;font-size:20px;">
+                                    <p><i class="fa fa-times" style="color:black;font-size:20px;" aria-hidden="true"></i></p>
+                                </div>
+
+
+                            </div>
+                        </div>
+
+                    }
+                    else if (notification.Status == RequestType.Accepted.ToString())
+                    {
+                        <div>
+                            <p> You are now become a member of <b>@notification.GroupName</b></p>
+                            <p class="time">@notification.Time.ToString("HH:mm")</p>
+                        </div>
+                    }
+                }
+
         }
         }
     </div>

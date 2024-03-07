@@ -1,6 +1,7 @@
 ﻿@page "/individualChat/{UserId}/{UnreadMessages:int}"
 <style>
     p {
+        font-family:Sora;
         margin: 0;
     }
 
@@ -9,53 +10,76 @@
     }
 
     .msg-img {
-        width: 120px;
-        height: 120px;
+        width: 140px;
+        height: 150px;
         border-radius: 8px 8px 0 0;
     }
 
     .pdf-file-icon{
-        width:120px;
-        height:50px;
+        width:140px;
+        height:63px;
     }
 
     .pdf-holder{
-        background-color: #7196FF;
+        background-color: #ADDAFA;
         border-radius: 8px;
         max-width: 70%;
         padding: 2px;
-        height: 72px;
+        height: 90px;
         overflow: hidden
+    }
+
+    .custom-input:focus {
+        border: 0px;
+        outline: none;
+    }
+
+    .custom-input {
+        margin-left: 8px;
+        border: 0px;
+        outline: none;
+        width: 100%;
+    }
+
+    .send-msg{
+        border-radius:8px;
+        border: .5px solid #262626ff
+    }
+
+    .send-btn{
+        font-size:20px;
+        background-color: white;
+        color: #262626ff;
+        padding:0px!important;
+        margin:1px!important;
     }
 </style>
 
 <script>
 
-    window.onscroll = function () { uploadData() };
-
-
-                funtion uploadData(){
-        document.getElementById("myP").ht = "test";
-    }
 
 </script>
 
 <div class="container p-0" style="height:100%">
 
     <!--header -->
-    <div style="background-color:#7196FF;padding:5px;position:fixed;top:0px;width:100%;">
+    <div style="background-color:#F0F0F0;padding:5px;position:fixed;top:0px;width:100%;">
         <p id="myP"></p>
         <div class="d-flex justify-content-between align-items-center px-2" style="color:white;font-size:20px;">
             <div class="d-flex align-items-center">
                 <div class="d-flex align-items-center" @onclick="GoBack">
-                    <i class="fa fa-angle-left" style="font-size:34px;" aria-hidden="true"></i>
-                    <img src=".\imagePlace.jpg" class="ms-3" style="border-radius:50%;height:35px" />
+                    <i class="fa fa-angle-left" style="font-size:34px;color:#262626ff;" aria-hidden="true"></i>
+                    <img src=".\imagePlace.jpg" class="ms-3" style="border-radius:50%;height:38px" />
                 </div>
                 <div class="ms-3">
-                    <p @onclick="GoToProfile">@currentUser.Name</p>
+                    <p style="color:#262626ff;font-family: Sora;" @onclick="GoToProfile">@currentUser.Name</p>
                     @if (isTyping)
                     {
-                        <p style="color:green;font-size:12px;margin-top:-4px;">Typing</p>
+                        <p style="color:green;font-size:12px;margin-top:-2px;">Typing</p>
+                    }
+                    else
+                    {
+                        <p style="color:#262626ff;font-size:12px;margin-top:-2px;">@currentUser.PhoneNumber </p>
                     }
                 </div>
             </div>
@@ -107,21 +131,21 @@
                     </div>
                 }
 
-                <div style="display: flex; justify-content: @((allMessages[i].SenderId == UserId) ? "flex-start" : "flex-end");padding:1px;">
+                <div style="display: flex; justify-content: @((allMessages[i].SenderId == UserId) ? "flex-start" : "flex-end");padding:2px;">
                     @if (allMessages[i].SenderId == UserId)
                     {
                         @if (allMessages[i].ContentType == MessageType.Written.ToString())
                         {
-                            <div style="background-color:#F2F2F2; border-radius:8px; max-width:70%;">
-                                <p style="color:black; padding: 5px;">@allMessages[i].Content <span style="font-size:10px;">@allMessages[i].Time.ToString("hh:mm tt")</span></p>
+                            <div style="background-color:#E8E8E8; border-radius:8px; max-width:70%;">
+                                <p style="color:#262626ff; padding: 7px;font-size:17px;">@allMessages[i].Content <span style="font-size:10px;">@allMessages[i].Time.ToString("HH:mm")</span></p>
                             </div>
                         }
                         else if (allMessages[i].ContentType == MessageType.Image.ToString())
                         {
-                            <div style="background-color:#7196FF; border-radius:8px; max-width:70%;padding:2px;">
+                            <div style="background-color:#ADDAFA; border-radius:8px; max-width:70%;padding:2px;">
                                 <img src="@GetUrl(allMessages[i].Content)" class="msg-img" />
                                 <div class="d-flex  justify-content-end align-items-center " style="padding:1px;">
-                                    <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("hh:mm tt")</span>
+                                    <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("HH:mm")</span>
                                 </div>
 
                             </div>
@@ -134,7 +158,7 @@
                                 <img src=".\pdfImagePlace2.png" class="pdf-file-icon" />
                                 <div class="d-flex  justify-content-between align-items-center " style="padding:1px;">
                                     <p style="font-size:10px;margin-left:3px;color:white">Pdf</p>
-                                    <p style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("hh:mm tt")</p>
+                                    <p style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("HH:mm")</p>
                                 </div>
 
                             </div>
@@ -149,10 +173,10 @@
                         {
                             @if (allMessages[i].ContentType == MessageType.Written.ToString())
                             {
-                                <div style="background-color:#7196FF; border-radius:8px; max-width:70%;">
+                                <div style="background-color:#ADDAFA; border-radius:8px; max-width:70%;">
                                     <div class="d-flex">
-                                        <p style="color:White; padding: 5px;">@allMessages[i].Content <span style="font-size:10px;">@allMessages[i].Time.ToString("hh:mm tt")</span></p>
-                                        <div style="color:#bbbbbb;font-size:11px;" class="d-flex flex-column">
+                                        <p style="color:#262626ff; padding: 7px;font-size:17px;">@allMessages[i].Content <span style="font-size:10px;">@allMessages[i].Time.ToString("HH:mm")</span></p>
+                                        <div style="color:White;font-size:11px;padding:2px;" class="d-flex flex-column">
                                             <i class="fa fa-check" style="margin-top: 10px;margin-right: 2px;" aria-hidden="true"></i>
                                             <i class="fa fa-check" style="margin-top:-6px;" aria-hidden="true"></i>
                                         </div>
@@ -162,11 +186,11 @@
                             }
                             else if (allMessages[i].ContentType == MessageType.Image.ToString())
                             {
-                                <div style="background-color:#7196FF; border-radius:8px; max-width:70%;padding:2px;">
+                                <div style="background-color:#ADDAFA; border-radius:8px; max-width:70%;padding:2px;">
                                     <img src="@GetUrl(allMessages[i].Content)" class="msg-img" />
                                     <div class="d-flex  justify-content-end align-items-center " style="padding:1px;">
-                                        <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("hh:mm tt")</span>
-                                        <div style="color:#bbbbbb;font-size:11px;" class="d-flex flex-column">
+                                        <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("HH:mm")</span>
+                                        <div style="color:White;font-size:11px;padding:2px;" class="d-flex flex-column">
                                             <i class="fa fa-check" aria-hidden="true"></i>
                                             <i class="fa fa-check" style="margin-top:-6px;" aria-hidden="true"></i>
                                         </div>
@@ -183,8 +207,8 @@
                                     <div class="d-flex  justify-content-between align-items-center " style="padding:1px;">
                                         <p style="font-size:10px;margin-left:3px;color:white">Pdf</p>
                                         <div class="d-flex  justify-content-end align-items-center " style="padding:1px;">
-                                            <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("hh:mm tt")</span>
-                                            <div style="color:#bbbbbb;font-size:11px;" class="d-flex flex-column">
+                                            <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("HH:mm")</span>
+                                            <div style="color:White;font-size:11px;padding:2px;" class="d-flex flex-column">
                                                 <i class="fa fa-check" aria-hidden="true"></i>
                                                 <i class="fa fa-check" style="margin-top:-6px;" aria-hidden="true"></i>
                                             </div>
@@ -200,10 +224,10 @@
                         {
                             @if (allMessages[i].ContentType == MessageType.Written.ToString())
                             {
-                                <div style="background-color:#7196FF; border-radius:8px; max-width:70%;">
+                                <div style="background-color:#ADDAFA; border-radius:8px; max-width:70%;">
                                     <div class="d-flex">
-                                        <p style="color:White; padding: 5px;">@allMessages[i].Content <span style="font-size:10px;">@allMessages[i].Time.ToString("hh:mm tt")</span></p>
-                                        <div style="color:white;font-size:11px;" class="d-flex flex-column">
+                                        <p style="color:#262626ff; padding: 7px;font-size:17px;">@allMessages[i].Content <span style="font-size:10px;">@allMessages[i].Time.ToString("HH:mm")</span></p>
+                                        <div style="color:#367daeff;font-size:11px;padding:2px;" class="d-flex flex-column">
                                             <i class="fa fa-check" style="margin-top: 10px;margin-right: 2px;" aria-hidden="true"></i>
                                             <i class="fa fa-check" style="margin-top:-6px;" aria-hidden="true"></i>
                                         </div>
@@ -213,11 +237,11 @@
                             }
                             else if (allMessages[i].ContentType == MessageType.Image.ToString())
                             {
-                                <div style="background-color:#7196FF; border-radius:8px; max-width:70%;padding:2px;">
+                                <div style="background-color:#ADDAFA; border-radius:8px; max-width:70%;padding:2px;">
                                     <img src="@GetUrl(allMessages[i].Content)" class="msg-img" />
                                     <div class="d-flex  justify-content-end align-items-center" style="padding:1px;">
-                                        <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("hh:mm tt")</span>
-                                        <div style="color:White;font-size:11px;" class="d-flex flex-column">
+                                        <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("HH:mm")</span>
+                                        <div style="color:#367daeff;font-size:11px;padding:2px;" class="d-flex flex-column">
                                             <i class="fa fa-check" aria-hidden="true"></i>
                                             <i class="fa fa-check" style="margin-top:-6px;" aria-hidden="true"></i>
                                         </div>
@@ -235,8 +259,8 @@
                                     <div class="d-flex  justify-content-between align-items-center " style="padding:1px;">
                                         <p style="font-size:10px;margin-left:3px;color:white">Pdf</p>
                                         <div class="d-flex  justify-content-end align-items-center " style="padding:1px;">
-                                            <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("hh:mm tt")</span>
-                                            <div style="color:white;font-size:11px;" class="d-flex flex-column">
+                                            <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("HH:mm")</span>
+                                            <div style="color:#367daeff;font-size:11px;padding:2px;" class="d-flex flex-column">
                                                 <i class="fa fa-check" aria-hidden="true"></i>
                                                 <i class="fa fa-check" style="margin-top:-6px;" aria-hidden="true"></i>
                                             </div>
@@ -259,24 +283,39 @@
     <div style="position:fixed; bottom:0;width:100%;background-color:white;">
 
         <div class="d-flex" style="max-width: 90%;margin:auto;padding-bottom:5px;">
-            <form onsubmit="@SendNewMessage" style="width: 80%;">
-                <div class="d-flex justify-content-center">
-                    <div class="form-group" style="width: 100%;">
-                        <input type="text" @ref="inputElementRef" @onblur="OnUnfocusOnInput" class="form-control" id="sendMsgInput" @oninput="KeyboardEventHandler" @bind-value="newMessage.Content" aria-describedby="emailHelp" placeholder="Enter Message" style="width: 100%;">
-                    </div>
-
-                    <button type="submit" class="btn" style="background-color:#7196FF;color:White"> <i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
-
+            <div class="dropdown">
+                <div class="btn-group dropup">
+                    <button type="button" class="btn " data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa fa-ellipsis-v" aria-hidden="true" style="font-size: 26px;
+    color: #262626ff;"></i>
+                    </button>
+                    <ul class="dropdown-menu" style="min-width: 0rem;padding: .5rem .5rem;">
+                        <li>
+                            <div class=" position-relative">
+                                <ImageUpload OnChange="UploadImageUrl" />
+                            </div></li>
+                        <li>
+                            <div class=" position-relative">
+                                <PdfUpload OnChange="UploadPdfUrl" />
+                            </div>
+                        </li>
+                    </ul>
                 </div>
+            </div>
+            <form onsubmit="@SendNewMessage" style="width: 80%;">
+               
+                    <div class=" d-flex justify-content-center align-items-center send-msg w-100">
+                        <div class="form-group" style="width: 100%;">
+                            <input type="text" @ref="inputElementRef" @onblur="OnUnfocusOnInput" class="custom-input" id="sendMsgInput" @oninput="KeyboardEventHandler" @bind-value="newMessage.Content" aria-describedby="emailHelp" placeholder="Enter Message" style="width: 100%;">
+                        </div>
+
+                        <button type="submit" class="btn" > <i class="fa fa-paper-plane-o" style="font-size:24px;" aria-hidden="true"></i></button>
+
+                        </div>
+                   
+              
             </form>
-            <div>
-                <ImageUpload OnChange="UploadImageUrl" />
-
-            </div>
-            <div>
-                <PdfUpload OnChange="UploadPdfUrl" />
-
-            </div>
+            
         </div>
 
     </div>

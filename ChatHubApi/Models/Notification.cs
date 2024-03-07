@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using ChatHubApi.Models.GroupsModels;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ChatHubApi.Models
 {
@@ -15,8 +16,14 @@ namespace ChatHubApi.Models
 
 
         [ForeignKey("ReceiverId")]
-        public virtual User Receiver { get; set; }
+        public virtual User? Receiver { get; set; }
 
         public string? ReceiverId { get; set; }
+
+        public string NotificationType {  get; set; }
+
+        public int? GroupId {  get; set; }
+        [ForeignKey("GroupId")]
+        public virtual Group? Group { get; set; }
     }
 }

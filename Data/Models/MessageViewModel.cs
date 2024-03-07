@@ -15,6 +15,7 @@ namespace Data.Models
         public string? ContentType { get; set; }
 
         public string? SenderId { get; set; }
+        public string? SenderName { get; set; }
 
         public string? ReceiverId { get; set; }
     }

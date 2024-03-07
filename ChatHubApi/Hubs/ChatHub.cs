@@ -18,8 +18,6 @@ namespace ChatHubApi.Hubs
         public override async Task OnConnectedAsync()
         {
             string userId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-
             var existingUser = ConnectedUsers.FirstOrDefault(x => x.UserId == userId);
             var indexExistingUser = ConnectedUsers.IndexOf(existingUser);
 
@@ -62,14 +60,63 @@ namespace ChatHubApi.Hubs
                 {
                     string ReceiverConnId = ReceiverConn.ConnnectionId;
                     await Clients.Client(ReceiverConnId).SendAsync("ReceiveMessage", messageViewModel);
+                    await Clients.Client(ReceiverConnId).SendAsync("SendNotification", messageViewModel);
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
             }
-           // await Clients.All.SendAsync("ReceiveMessage",messageViewModel);
         }
+
+        public async Task SendGroupMessage(GroupMessageViewModel groupMessageViewModel,List<string> GroupMembers)
+        {
+            try
+            {
+                string userId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
+                foreach (var member in GroupMembers)
+                {
+                    if(!member.Equals(userId))
+                    {
+                        ConnectedUser ReceiverConn = ConnectedUsers.FirstOrDefault(u => u.UserId == member);
+                        if (ReceiverConn != null)
+                        {
+                            string ReceiverConnId = ReceiverConn.ConnnectionId;
+                            await Clients.Client(ReceiverConnId).SendAsync("ReceiveGroupMessage", groupMessageViewModel);
+                        }
+                    }
+                   
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+        public async Task UpdateGroupMessageCount(GroupMessageViewModel groupMessageViewModel, List<string> GroupMembers)
+        {
+            try
+            {
+                foreach (var member in GroupMembers)
+                {
+                    if (!member.Equals(groupMessageViewModel.SenderId))
+                    {
+                        ConnectedUser ReceiverConn = ConnectedUsers.FirstOrDefault(u => u.UserId == member);
+                        if (ReceiverConn != null)
+                        {
+                            string ReceiverConnId = ReceiverConn.ConnnectionId;
+                            await Clients.Client(ReceiverConnId).SendAsync("UpdateGroupMessageCount", groupMessageViewModel.GroupId);
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+        }
+
 
         public async Task UpdateMessageCount(string SenderId,string ReceiverId)
         {
@@ -158,7 +205,7 @@ namespace ChatHubApi.Hubs
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             string userId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            // await DisconnectOnLogout();
+            //await DisconnectOnLogout();
 
         }
 

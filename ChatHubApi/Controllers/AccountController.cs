@@ -84,7 +84,7 @@ namespace ChatHubApi.Controllers
             if (user != null &&
                 await _userManager.CheckPasswordAsync(user, userModel.Password))
             {
-                return Ok(new GenericResponse<string> { Success = true, Message = GenerateJSONWebToken(user),Error=user.Id });
+                return Ok(new GenericResponse<string> { Success = true, Message = GenerateJSONWebToken(user),Error=user.Id,Data = user.Name });
                 
             }
             else

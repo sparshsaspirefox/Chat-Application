@@ -1,0 +1,142 @@
+﻿@page "/groupDetials/{GroupId:int}"
+
+
+<style>
+    p {
+        margin: 0;
+    }
+
+    .profile-img {
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+    }
+
+    .profile-icon {
+        color: #999999;
+        font-size: 20px;
+    }
+
+    .profile-lbl {
+        color: #999999;
+        font-size: 15px;
+        margin-bottom: -2px;
+    }
+
+    .profile-field {
+    }
+
+    .edit-icon {
+        color: #ffffff
+    }
+
+    .img-edit {
+        display: flex;
+        height: 29px;
+        width: 29px;
+        background-color: #7196FF;
+        position: absolute;
+        top: 78px;
+        left: 78px;
+        border-radius: 50%;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .camera-icon {
+        color: white;
+        font-size: 17px;
+    }
+
+    .exit-grp{
+        color: orangered;
+        font-size: 17px;
+    }
+</style>
+<div class="container  p-0">
+
+    <!--header -->
+    <div style="background-color:#7196FF;padding:5px;position:fixed;top:0px;width:100%;">
+        <p id="myP"></p>
+        <div class="d-flex justify-content-between align-items-center px-2" style="color:white;font-size:20px;">
+            <div class="d-flex align-items-center" @onclick="GoBack">
+                <i class="fa fa-angle-left" style="font-size:34px;" aria-hidden="true"></i>
+                <p class="ms-3">Group</p>
+            </div>
+
+        </div>
+    </div>
+
+    @* profile image *@
+    <div class="d-flex justify-content-center mt-5">
+        <div class=" position-relative">
+            <img class="profile-img" src=".\imagePlace.jpg" />
+            
+        </div>
+
+    </div>
+
+
+    <div class="container p-4">
+
+        @* name *@
+        <div class="d-flex  align-items-center">
+            <i class="fa fa-user profile-icon" aria-hidden="true"></i>
+            <div class="ms-3">
+                <p class="profile-lbl">Name</p>
+               
+                    <p class="profile-field">@currentGroup.Name</p>
+               
+
+            </div>
+
+        </div>
+
+
+        @* About *@
+        <div class="d-flex  mt-3 align-items-center">
+            <i class="fa fa-info-circle profile-icon" aria-hidden="true"></i>
+            <div class="ms-3">
+                <p class="profile-lbl">About</p>
+                <p class="profile-field">@currentGroup.Description</p>
+               
+
+            </div>
+        </div>
+
+        @* Group Members *@
+        <p style="margin-top: 25px;font-size: 20px;">Members</p>
+
+        @foreach (var item in allGroupMembers)
+        {
+
+            <div class="py-2" style="border-radius:5px;">
+                <div class="d-flex justify-content-between">
+                    <div class="d-flex  align-items-center">
+                        <div style="position:relative">
+                            <img src=".\imagePlace.jpg" style="border-radius:50%;height:40px" />
+
+                        </div>
+                        <div class="ms-2">
+                            <p style="font-size:16px;">@item.Name</p>
+                        </div>
+                    </div>
+
+                    @if (@item.IsAdmin == true)
+                    {
+                        <p style="font-size:14px;color:green;">Admin</p>
+                    }
+
+                </div>
+            </div>
+
+        }
+
+        @* more options *@
+
+        <div @onclick="ExitGroup" style="margin-top: 15px;padding: 5px;">
+            <p class="exit-grp"><span><i class="fa fa-sign-out" aria-hidden="true"></i></span> Exit group</p>
+        </div>
+
+    </div>  
+</div>

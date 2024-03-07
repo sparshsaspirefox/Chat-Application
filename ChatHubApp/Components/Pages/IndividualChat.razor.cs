@@ -82,6 +82,7 @@ namespace ChatHubApp.Components.Pages
                 await inputElementRef.FocusAsync();
             }
         }
+        int NotificationCount = 1;
         private async Task CreateHubConnection()
         {
             
@@ -95,36 +96,37 @@ namespace ChatHubApp.Components.Pages
                     ScrollToBottom();
                     this.InvokeAsync(() => this.StateHasChanged());
                 }
-                else
-                {
-                    string description = string.Empty;
-                    if (message.ContentType == MessageType.Written.ToString())
-                    {
-                        description = message.Content;
-                    }
-                    else if (message.ContentType == MessageType.Image.ToString())
-                    {
-                        description = "New Image";
-                    }
-                    else
-                    {
-                        description = "New document";
-                    }
+                //else
+                //{
+                //    string description = string.Empty;
+                //    if (message.ContentType == MessageType.Written.ToString())
+                //    {
+                //        description = message.Content;
+                //    }
+                //    else if (message.ContentType == MessageType.Image.ToString())
+                //    {
+                //        description = "New Image";
+                //    }
+                //    else
+                //    {
+                //        description = "New document";
+                //    }
 
-                    var request = new NotificationRequest
-                    {
-                        NotificationId = 1000,
-                        Title = message.SenderId,
-                        Subtitle = "New Message",
-                        Description = description,
-                        BadgeNumber = 42,
-                        Schedule = new NotificationRequestSchedule
-                        {
-                            NotifyTime = DateTime.Now
-                        }
-                    };
-                    LocalNotificationCenter.Current.Show(request);
-                }
+                //    var request = new NotificationRequest
+                //    {
+                //        NotificationId = NotificationCount,
+                //        Title = message.SenderName,
+                //        Subtitle = "New Message",
+                //        Description = description,
+                //        BadgeNumber = NotificationCount,
+                //        Schedule = new NotificationRequestSchedule
+                //        {
+                //            NotifyTime = DateTime.Now
+                //        }
+                //    };
+                //    NotificationCount++;
+                //    LocalNotificationCenter.Current.Show(request);
+                //}
             });
             _hubConnection.On<string>("UpdateSeenMessages", (sendTo) =>
             {
@@ -169,8 +171,8 @@ namespace ChatHubApp.Components.Pages
 
           //  isBusy = true;
             pageNo = 1;
+            loggedUserName = Preferences.Get("UserName", null);
 
-          
             //var response = await _messageService.GetMessages(Preferences.Get("UserId", null), UserId);
             loggedUserId = Preferences.Get("UserId", null);
 
@@ -208,12 +210,6 @@ namespace ChatHubApp.Components.Pages
             await ScrollToBottom();
         }
 
-        string sendInputId = "sendMsgInput";
-
-        private async Task KeyBoardFunction()
-        {
-            //bool abc = KeyboardExtensions.IsSoftKeyboardShowing(sendInputId);
-        }
 
         private async Task KeyboardEventHandler()
         {
@@ -268,20 +264,24 @@ namespace ChatHubApp.Components.Pages
                 newMessage.ReceiverId = this.UserId;
                 newMessage.SenderId = loggedUserId;
                 newMessage.Time = DateTime.Now;
+                newMessage.SenderName = loggedUserName;
                 newMessage.ContentType = messageType.ToString();
+                UnreadMessages = 0;
+                UnSeenMessagesCount++;
                 allMessages.Add(newMessage);
                 await _messageService.NewMessage(newMessage);
                 await _friendService.UpdateMessageCount(newMessage.SenderId, newMessage.ReceiverId, true);
                
-                UnreadMessages = 0; 
-                UnSeenMessagesCount++;
+                
                 await ScrollToBottom();
                 if (_hubConnection is not null)
                 {
-                    
-                    await _hubConnection.SendAsync("SendMessage", newMessage);
-                    await _hubConnection.SendAsync("UpdateMessageCount", newMessage.SenderId,newMessage.ReceiverId);
-                    await _hubConnection.SendAsync("IsChatActive", newMessage.SenderId, newMessage.ReceiverId);
+                    if(_hubConnection.State == HubConnectionState.Connected)
+                    {
+                        await _hubConnection.SendAsync("SendMessage", newMessage);
+                        await _hubConnection.SendAsync("UpdateMessageCount", newMessage.SenderId, newMessage.ReceiverId);
+                        await _hubConnection.SendAsync("IsChatActive", newMessage.SenderId, newMessage.ReceiverId);
+                    }
                 }
                 newMessage = new MessageViewModel();
             }
@@ -324,6 +324,7 @@ namespace ChatHubApp.Components.Pages
 
         private async Task GoBack()
         {
+            AppConstants.ActiveTab = "chats";
             await _hubConnection.SendAsync("RemoveActiveChats", loggedUserId, UserId);
             await _friendService.UpdateMessageCount(UserId, loggedUserId, false);
             await JSRuntime.InvokeVoidAsync("goBack");

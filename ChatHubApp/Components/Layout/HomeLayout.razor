@@ -31,8 +31,12 @@
         <div class="d-flex justify-content-between" style="width: 100%;">
 
             <div  @onclick="() => navigateToChats()" class="@((activeTab == "chats") ? "tab-item active" : "tab-item")">
-                <i class="fa fa-comments-o" aria-hidden="true"></i>
+                <i class="fa fa-commenting" aria-hidden="true"></i>
                 <p style="font-size:14px;">Chats</p>
+            </div>
+            <div @onclick="() => navigateToGroups()" class="@((activeTab == "groups") ? "tab-item active" : "tab-item")">
+                <i class="fa fa-comments-o" aria-hidden="true"></i>
+                <p style="font-size:14px;">Groups</p>
             </div>
             <div @onclick="() => navigateToAllUsers()" class="@((activeTab == "allUsers") ? "tab-item active" : "tab-item")">
                 <i class="fa fa-users" aria-hidden="true"></i>
@@ -51,9 +55,9 @@
         </div>
     </div>
 </div>
-
+<RadzenComponents />
 @code{
-    public string activeTab = "chats";
+    public string activeTab = AppConstants.ActiveTab;
 
     [Inject]
     NavigationManager _navigationManager{ get; set; }
@@ -77,5 +81,10 @@
     {
         _navigationManager.NavigateTo("/call");
         activeTab = "calls";
+    }
+    private void navigateToGroups()
+    {
+        _navigationManager.NavigateTo("/groups");
+        activeTab = "groups";
     }
 }

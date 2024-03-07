@@ -58,16 +58,25 @@ namespace ChatHubApp.Components.Pages
         }
         private async void UpdateRequest(NotificationViewModel notificationViewModel, RequestType status)
         {
+            
             if(status == RequestType.Accepted)
             {
-                FriendRequestViewModel newfriendRequest = new FriendRequestViewModel()
+                if (notificationViewModel.NotificationType == NotificationType.FriendRequest.ToString())
                 {
-                    UserId = userId,
-                    FriendId = notificationViewModel.SenderId,
-                    RequestStatus = "Accepted",
-                    UnReadMessagesCount = 0
-                };
-                _friendService.AddFriend(newfriendRequest);
+                    FriendRequestViewModel newfriendRequest = new FriendRequestViewModel()
+                    {
+                        UserId = userId,
+                        FriendId = notificationViewModel.SenderId,
+                        RequestStatus = "Accepted",
+                        UnReadMessagesCount = 0
+                    };
+                    _friendService.AddFriend(newfriendRequest);
+                }
+                else if(notificationViewModel.NotificationType == NotificationType.GroupRequest.ToString())
+                {
+                    //this is done in backend to and user group matching
+                }
+                
 
             }
             notificationViewModel.Status = status.ToString();

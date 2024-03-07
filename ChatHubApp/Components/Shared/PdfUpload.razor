@@ -1,18 +1,23 @@
 ﻿<style>
     #upload-pdf-icon {
         font-size: 33px;
-        position: absolute;
+        position: relative;
+        z-index: 1; /* Ensure the icon is above the input */
     }
 
     #pdf-input {
         opacity: 0;
         position: absolute;
-        width: 30px;
-        height: 30px;
+        width: 100%; /* Match the width of the container */
+        height: 100%; /* Match the height of the container */
+        top: 0;
+        left: 0;
+        cursor: pointer; /* Make the cursor indicate that it's clickable */
+        z-index: 2; /* Ensure the input is above the icon */
     }
 </style>
 
-<div style="position:relative;">
+<div style="position:relative;width:35px;">
     <i class="fa fa-file-pdf-o" id="upload-pdf-icon" aria-hidden="true"></i>
     <InputFile OnChange="@HandlePdfSelected" id="pdf-input" multiple accept="application/pdf" />
 </div>

@@ -6,6 +6,7 @@ using Data.Models;
 using Microsoft.AspNetCore.Components;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -31,24 +32,22 @@ namespace ChatHubApp.Components.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            if (Preferences.ContainsKey("Token"))
-            {
-                //string abc = Preferences.Get("Token", null);
-                //string abc1 = Preferences.Get("UserId", null);
-                //navigationManager.NavigateTo("chats");
-            }
+            //isBusy = false;
         }
         
-        private async Task LoginUser()
+        private async Task LoginUser()   
         {
             isBusy = true;
 
             errorMessage = string.Empty;
+           
             var response = await _accountService.Login(userViewModel);
-            if (response.Success == true)
+            if (response.Success)
             {
                 Preferences.Set("Token", response.Message);
                 Preferences.Set("UserId", response.Error);
+                Preferences.Set("UserName", response.Data);
+                await chatHubService.CreateHubConnection();
                 navigationManager.NavigateTo("chats");
             }
             else
@@ -56,6 +55,7 @@ namespace ChatHubApp.Components.Pages
                 errorMessage = response.Error;
             }
             isBusy = false;
+           
         }
         private void GoToRegister()
         {

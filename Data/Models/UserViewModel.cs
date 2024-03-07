@@ -33,5 +33,7 @@ namespace Data.Models
         public DateTime? LastSeen { get; set; }
         public string? FriendStatus {  get; set; }
         public int? UnReadMessages {  get; set; }
+
+        public bool? IsAdmin { get; set; }
     }
 }

@@ -17,6 +17,10 @@ namespace Data.Models
         public string? SenderName { get; set; }
         public string? SenderId { get; set; }
 
-        public string? ReceiverId { get; set; }
+        public string?  ReceiverId { get; set; }
+
+        public string? GroupName {  get; set; }
+        public int? GroupId { get; set; }
+        public string? NotificationType { get; set; }
     }
 }

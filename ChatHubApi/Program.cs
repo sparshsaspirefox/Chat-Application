@@ -13,6 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.FileProviders;
+using ChatHubApi.Models.GroupsModels;
+using ChatHubApi.Services.GroupRepo;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -96,6 +98,9 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
 builder.Services.AddScoped<IFriendRequestRepository, FriendRequestRepository>();
+builder.Services.AddScoped<IGroupRepository, GroupRepository>();
+builder.Services.AddScoped<IGenericRepository<UserGroupMatching>, GenericRepository<UserGroupMatching>>();
+builder.Services.AddScoped<IGenericRepository<GroupMessage>, GenericRepository<GroupMessage>>();
 builder.Services.AddAutoMapper(typeof(Program));
 
 

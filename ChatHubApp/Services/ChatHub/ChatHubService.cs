@@ -18,7 +18,7 @@ namespace ChatHubApp.Services.ChatHub
             if ( _hubConnection == null ||  _hubConnection.State == HubConnectionState.Disconnected)
             {
                 userToken = Preferences.Get("Token", null);
-                _hubConnection = new HubConnectionBuilder().WithUrl($"{baseUrl}/chathub?access_token=" + userToken).Build();
+                _hubConnection = new HubConnectionBuilder().WithUrl($"{baseUrl}/chathub?access_token=" + userToken).WithAutomaticReconnect().Build();
                 await _hubConnection.StartAsync();
             }
             return _hubConnection;

@@ -1,0 +1,11 @@
+﻿
+
+
+@media (max-width: 768px) {
+    .rz-dialog:not(.rz-dialog-confirm):not(.rz-dialog-alert) {
+       /* position: absolute;*/
+        width: 80% !important;
+        top: 20% !important;
+        border-radius: 16px;
+    }
+}

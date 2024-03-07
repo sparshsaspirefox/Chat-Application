@@ -1,4 +1,6 @@
 ﻿using ChatHubApi.Models;
+using ChatHubApi.Models.GroupsModels;
+using ChatHubApi.Services;
 using ChatHubApi.Services.NotificationRepo;
 using Data.Enums;
 using Data.Models;
@@ -16,10 +18,11 @@ namespace ChatHubApi.Controllers
     public class NotificationController : ControllerBase
     {
         private readonly INotificationRepository _notificationRepository;
-
-        public NotificationController(INotificationRepository notificationRepository)
+        private readonly IGenericRepository<UserGroupMatching> _userGroupRepository;
+        public NotificationController(INotificationRepository notificationRepository, IGenericRepository<UserGroupMatching> userGroupRepository)
         {
             _notificationRepository = notificationRepository;
+            _userGroupRepository = userGroupRepository;
         }
 
         [HttpPost]
@@ -33,6 +36,7 @@ namespace ChatHubApi.Controllers
                     SenderId = notificationViewModel.SenderId,
                     ReceiverId = notificationViewModel.ReceiverId,
                     Time = notificationViewModel.Time,
+                    NotificationType = NotificationType.FriendRequest.ToString()
                 };
                 _notificationRepository.Insert(newNotification);
                 _notificationRepository.Save();
@@ -49,21 +53,23 @@ namespace ChatHubApi.Controllers
         {
             try
             {
-                List<Notification> allNotifications = await _notificationRepository.GetAllWithSender(receiverId,IsSender);
+                List<NotificationViewModel> allNotifications = await _notificationRepository.GetAllWithSender(receiverId,IsSender);
                 List<NotificationViewModel> newNotifications = new List<NotificationViewModel>();
-                foreach (Notification notification in allNotifications)
-                {
-                    newNotifications.Add(new NotificationViewModel()
-                    {
-                        NotificationId = notification.NotificationId,
-                        SenderId = notification.SenderId,
-                        ReceiverId = notification.ReceiverId,
-                        Time = notification.Time,
-                        Status = notification.Status,
-                        SenderName = notification.Sender.Name
-                    }); 
-                }
-                return Ok(new GenericResponse<List<NotificationViewModel>> { Data = newNotifications });
+                //foreach (Notification notification in allNotifications)
+                //{
+                //    newNotifications.Add(new NotificationViewModel()
+                //    {
+                //        NotificationId = notification.NotificationId,
+                //        SenderId = notification.SenderId,
+                //        ReceiverId = notification.ReceiverId,
+                //        Time = notification.Time,
+                //        Status = notification.Status,
+                //        SenderName = notification.Sender.Name,
+                //        GroupId = notification.GroupId,
+                //        NotificationType = notification.NotificationType
+                //    }); 
+                //}
+                return Ok(new GenericResponse<List<NotificationViewModel>> { Data = allNotifications });
             }
             catch (Exception ex)
             {
@@ -72,7 +78,7 @@ namespace ChatHubApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult UpdateNotification(NotificationViewModel notification)
+        public async Task<IActionResult> UpdateNotification(NotificationViewModel notification)
         {
             try
             {
@@ -84,6 +90,8 @@ namespace ChatHubApi.Controllers
                     ReceiverId = notification.ReceiverId,
                     Status = notification.Status,
                     Time = DateTime.Now,
+                    NotificationType = notification.NotificationType,
+                    GroupId = notification.GroupId
                 };
 
                 //if request is rejected then delete from db and return
@@ -99,15 +107,21 @@ namespace ChatHubApi.Controllers
                 //Swap the ids so another also get notification
                 Notification newNotification = new Notification()
                 {
-                    
                     SenderId = notification.ReceiverId,
                     ReceiverId = notification.SenderId,
                     Status = notification.Status,
                     Time = DateTime.Now,
+                    NotificationType = notification.NotificationType,
+                    GroupId = notification.GroupId
                 };
                _notificationRepository.Insert(newNotification);
                 _notificationRepository.Save();
 
+                // add group matching if request is acccepted
+                if(notification.NotificationType == NotificationType.GroupRequest.ToString())
+                {
+                    await AddGroupMatching(notification.ReceiverId,notification.GroupId);
+                }
                 return Ok(new GenericResponse<string> { Success = true });
             }
             catch (Exception ex)
@@ -116,5 +130,19 @@ namespace ChatHubApi.Controllers
             }
         }
 
+        private async Task AddGroupMatching(string? receiverId, int? groupId)
+        {
+            try
+            {
+                _userGroupRepository.Insert(new UserGroupMatching
+                {
+                    GroupId = (int)groupId,
+                    UserId = receiverId,
+                    IsAdmin = false
+                });
+                _userGroupRepository.Save();
+            }
+            catch { }
+        }
     }
 }

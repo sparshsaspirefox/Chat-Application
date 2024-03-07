@@ -1,0 +1,30 @@
+﻿@page "/newGroup"    
+
+<div class="container p-0">
+    
+    <RadzenTemplateForm TItem="GroupViewModel" Data=@newGroup Submit=@OnSubmit >
+
+        <RadzenRow AlignItems="AlignItems.End" Wrap="FlexWrap.Wrap" Gap="1rem" Class="rz-p-sm-12">
+            <RadzenColumn Size="12" SizeMD="6" SizeLG="6">
+                <RadzenFormField Text="Group Name" Style="width: 100%;" Component="GroupName">
+                    <RadzenTextBox @bind-Value="@newGroup.Name" Name="GroupName" Style="width: 100%;" />
+                </RadzenFormField>
+                <RadzenRequiredValidator Component="GroupName" Text="Name is required"   />
+            </RadzenColumn>
+
+            <RadzenColumn Size="12" SizeMD="6" SizeLG="6">
+                <RadzenFormField Text="Description" Style="width: 100%;" Component="Description">
+                    <RadzenTextBox @bind-Value="@newGroup.Description" Name="Description" Style="width: 100%;" />
+                </RadzenFormField>
+                <RadzenRequiredValidator Component="Description" Text="Description is required" />
+            </RadzenColumn>
+
+            <RadzenLabel Text="Add Peoples" Component="DropDownFilteringLoadData" Style="margin-right: 8px; vertical-align: middle;" />
+            <RadzenDropDown AllowClear="true" @bind-Value=@newGroup.GroupUsersIds
+                            LoadData=@LoadData AllowFiltering="true" Multiple=true
+                            Data=@users TextProperty="Name" ValueProperty="id" Placeholder="Select peoples" Style="width: 100%; max-width: 400px;" Name="DropDownFilteringLoadData" />
+
+            <RadzenButton ButtonType="ButtonType.Submit" Text="Submit"></RadzenButton>
+        </RadzenRow>
+    </RadzenTemplateForm>
+</div>

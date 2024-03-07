@@ -3,13 +3,16 @@ using ChatHubApp.Services.Account;
 using ChatHubApp.Services.ChatHub;
 using ChatHubApp.Services.FileUpload;
 using ChatHubApp.Services.FriendShip;
+using ChatHubApp.Services.Group;
 using ChatHubApp.Services.Message;
 using ChatHubApp.Services.Notification;
 using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
 using Plugin.LocalNotification;
+using Radzen;
 using Tewr.Blazor.FileReader;
 using INotificationService = ChatHubApp.Services.Notification.INotificationService;
+using NotificationService = ChatHubApp.Services.Notification.NotificationService;
 
 namespace ChatHubApp
 {
@@ -28,6 +31,7 @@ namespace ChatHubApp
                 });
 
             builder.Services.AddMauiBlazorWebView();
+            builder.Services.AddRadzenComponents();
 
             builder.Services.AddFileReaderService(o => o.UseWasmSharedBuffer = true);
             builder.Services.AddHttpClient();
@@ -38,6 +42,7 @@ namespace ChatHubApp
             builder.Services.AddTransient<IMessageService, MessageService>();
             builder.Services.AddTransient<INotificationService, NotificationService>();
             builder.Services.AddTransient<IFriendService, FriendService>();
+            builder.Services.AddTransient<IGroupService, GroupService>();
             builder.Services.AddSingleton<IChatHubService, ChatHubService>();
             builder.Services.AddSingleton<IChatHubService, ChatHubService>();
             builder.Services.AddSingleton<IFileUploadService, FileUploadService>();
