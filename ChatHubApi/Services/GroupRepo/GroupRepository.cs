@@ -58,7 +58,9 @@ namespace ChatHubApi.Services.GroupRepo
                      Name = m.User.Name,
                      PhoneNumber = m.User.PhoneNumber,
                      LastSeen = m.User.LastSeen,
-                     IsAdmin = m.IsAdmin
+                     IsAdmin = m.IsAdmin,
+                     About = m.User.About,
+                     ImageUrl = m.User.ImageUrl
                  });
             return allUsersDetails.ToList();
         }

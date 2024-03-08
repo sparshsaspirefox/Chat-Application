@@ -121,9 +121,12 @@ namespace ChatHubApi.Controllers
                 var user = await _userManager.FindByIdAsync(UserId);
                 UserViewModel currentUser = new UserViewModel()
                 {
+                    id = user.Id,
                     Name = user.Name,
                     PhoneNumber = user.PhoneNumber,
-                    LastSeen = user.LastSeen
+                    LastSeen = user.LastSeen,
+                    About = user.About,
+                    ImageUrl = user.ImageUrl
                 };
                 return Ok(new GenericResponse<UserViewModel> { Success = true, Data = currentUser });
             }
@@ -163,6 +166,30 @@ namespace ChatHubApi.Controllers
             {
                 return Ok(new GenericResponse<string> { Success = false, Error = ex.Message });
             }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> UpdateProfile(UserViewModel userViewModel)
+        {
+            try
+            {
+                var updateUser = await _userManager.FindByIdAsync(userViewModel.id);
+                if(updateUser == null) { return Ok(new GenericResponse<string> { Success = false, Error = "User not found" }); }
+                updateUser.Name = userViewModel.Name;
+                updateUser.About = userViewModel.About;
+                updateUser.PhoneNumber = userViewModel.PhoneNumber;
+                updateUser.ImageUrl = userViewModel.ImageUrl;
+
+                await _userManager.UpdateAsync(updateUser);
+                return Ok(new GenericResponse<UserViewModel> { Success = true });
+
+            }
+            catch (Exception ex)
+            {
+                return Ok(new GenericResponse<string> { Success = false, Error = ex.Message });
+            }
+         
+
         }
     }
 }

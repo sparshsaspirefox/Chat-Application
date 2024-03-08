@@ -35,5 +35,10 @@ namespace Data.Models
         public int? UnReadMessages {  get; set; }
 
         public bool? IsAdmin { get; set; }
+
+        public string? ImageUrl { get; set; }
+
+        [Required(ErrorMessage = "About is required")]
+        public string? About {  get; set; }
     }
 }

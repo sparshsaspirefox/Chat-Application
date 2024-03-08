@@ -2,20 +2,22 @@
 
 <style>
     p{
+        font-family: Sora;
         margin:0;
     }
 
     .bottom-tabs .tab-item.active {
-        color: #7196FF; /* Change to your desired active text color */
+        color: black; /* Change to your desired active text color */
     }
 
     .bottom-tabs .tab-item{
         width:25%;
+        color: #999999;
         text-align:center;
     }
 
     i{
-        font-size:18px;
+        font-size:22px !important;
     }
 
     
@@ -27,28 +29,28 @@
         </article>
     </main>
 
-    <div class="bottom-tabs p-3" style="position: fixed; bottom: 0; width: 100%;">
+    <div class="bottom-tabs p-3" style="position: fixed; bottom: 0; width: 100%;background-color: #F0F0F0;">
         <div class="d-flex justify-content-between" style="width: 100%;">
 
             <div  @onclick="() => navigateToChats()" class="@((activeTab == "chats") ? "tab-item active" : "tab-item")">
                 <i class="fa fa-commenting" aria-hidden="true"></i>
-                <p style="font-size:14px;">Chats</p>
+                @* <p style="font-size:14px;">Chats</p> *@
             </div>
             <div @onclick="() => navigateToGroups()" class="@((activeTab == "groups") ? "tab-item active" : "tab-item")">
                 <i class="fa fa-comments-o" aria-hidden="true"></i>
-                <p style="font-size:14px;">Groups</p>
+                @* <p style="font-size:14px;">Groups</p> *@
             </div>
             <div @onclick="() => navigateToAllUsers()" class="@((activeTab == "allUsers") ? "tab-item active" : "tab-item")">
                 <i class="fa fa-users" aria-hidden="true"></i>
-                <p style="font-size:14px;">Peoples</p>
+                @* <p style="font-size:14px;">Peoples</p> *@
             </div>
-            <div  @onclick="() => navigateToStatus()" class="@((activeTab == "status") ? "tab-item active" : "tab-item")">
+           @*  <div  @onclick="() => navigateToStatus()" class="@((activeTab == "status") ? "tab-item active" : "tab-item")">
                 <i class="fa fa-circle-o-notch" aria-hidden="true"></i>
                 <p style="font-size:14px;">Status</p>
-            </div>
-            <div @onclick="() => navigateToCalls()" class="@((activeTab == "calls") ? "tab-item active" : "tab-item")">
-                <i class="fa fa-phone"  aria-hidden="true"></i>
-                <p style="font-size:14px;">Calls</p>
+            </div> *@
+            <div @onclick="() => navigateToProfile()" class="@((activeTab == "profile") ? "tab-item active" : "tab-item")">
+                <i class="fa fa-user" aria-hidden="true"></i>
+                @* <p style="font-size:14px;">Profile</p> *@
             </div>
             
            
@@ -77,10 +79,10 @@
         _navigationManager.NavigateTo("/status");
         activeTab = "status";
     }
-    private void navigateToCalls()
+    private void navigateToProfile()
     {
-        _navigationManager.NavigateTo("/call");
-        activeTab = "calls";
+        _navigationManager.NavigateTo($"/profilePage/{"SelfProfile"}");
+        activeTab = "profile";
     }
     private void navigateToGroups()
     {

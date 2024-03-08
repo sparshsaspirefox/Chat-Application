@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -20,5 +21,9 @@ namespace Data.Models
 
         public DateTime? LastSeen {  get; set; }
         public bool? IsOnline { get; set; }
+
+        public string? ImageUrl { get; set; }
+
+        public string? About { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿<style>
     #upload-pdf-icon {
-        font-size: 33px;
+        font-size: 20px;
         position: relative;
         z-index: 1; /* Ensure the icon is above the input */
     }
@@ -17,7 +17,10 @@
     }
 </style>
 
-<div style="position:relative;width:35px;">
+<div style="position: relative;
+    width: 35px;
+    display: flex;
+    justify-content: center;">
     <i class="fa fa-file-pdf-o" id="upload-pdf-icon" aria-hidden="true"></i>
     <InputFile OnChange="@HandlePdfSelected" id="pdf-input" multiple accept="application/pdf" />
 </div>

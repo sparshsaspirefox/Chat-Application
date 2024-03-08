@@ -1,4 +1,5 @@
-﻿using ChatHubApp.Services.Account;
+﻿using ChatHubApp.Helpers;
+using ChatHubApp.Services.Account;
 using ChatHubApp.Services.FriendShip;
 using ChatHubApp.Services.Notification;
 using ChatHubApp.ViewModels;
@@ -89,6 +90,14 @@ namespace ChatHubApp.Components.Pages
 
           
             await InitializeList();
+        }
+        string GetUrl(string imageUrl)
+        {
+            if (imageUrl != null)
+            {
+                return AppConstants.staticsFiles.ToString() + imageUrl;
+            }
+            return ".\\imagePlace.jpg";
         }
     }
 }

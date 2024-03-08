@@ -20,5 +20,6 @@ namespace ChatHubApp.Services.Account
 
         public Task<GenericResponse<UserViewModel>> GetUserById(string userId);
         public Task<GenericResponse<string>> UpdateLastSeen(string userId);
+        public Task<GenericResponse<string>> UpdateProfile(UserViewModel userViewModel);
     }
 }

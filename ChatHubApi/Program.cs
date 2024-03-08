@@ -118,11 +118,7 @@ app.UseStaticFiles(new StaticFileOptions()
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"StaticFiles")),
     RequestPath = new PathString("/StaticFiles")
 });
-app.UseStaticFiles(new StaticFileOptions()
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), @"StaticFiles")),
-    RequestPath = new PathString("/uploads")
-});
+
 app.UseHttpsRedirection();
 app.UseAuthentication();
 

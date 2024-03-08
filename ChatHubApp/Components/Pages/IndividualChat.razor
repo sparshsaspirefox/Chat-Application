@@ -1,7 +1,7 @@
 ﻿@page "/individualChat/{UserId}/{UnreadMessages:int}"
 <style>
     p {
-        font-family:Sora;
+        font-family: Sora;
         margin: 0;
     }
 
@@ -15,12 +15,20 @@
         border-radius: 8px 8px 0 0;
     }
 
-    .pdf-file-icon{
-        width:140px;
-        height:63px;
+    .pdf-file-icon {
+        width: 140px;
+        height: 63px;
     }
 
-    .pdf-holder{
+
+    .custom-button:focus{
+        box-shadow:none !important;
+    }
+
+    .custom-button:active {
+        box-shadow: none !important;
+    }
+    .pdf-holder {
         background-color: #ADDAFA;
         border-radius: 8px;
         max-width: 70%;
@@ -41,17 +49,32 @@
         width: 100%;
     }
 
-    .send-msg{
-        border-radius:8px;
+    .send-msg {
+        border-radius: 8px;
         border: .5px solid #262626ff
     }
 
-    .send-btn{
-        font-size:20px;
+    .send-btn {
+        font-size: 20px;
         background-color: white;
         color: #262626ff;
-        padding:0px!important;
-        margin:1px!important;
+        padding: 0px !important;
+        margin: 1px !important;
+    }
+
+    .document-icon {
+       
+        border-radius: 50%;
+        background-color: #F0F0F0;
+        width: 46px;
+        height: 46px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .dropdown-menu {
+        border:none;
+        inset: auto auto 0px -13px !important;
     }
 </style>
 
@@ -69,10 +92,10 @@
             <div class="d-flex align-items-center">
                 <div class="d-flex align-items-center" @onclick="GoBack">
                     <i class="fa fa-angle-left" style="font-size:34px;color:#262626ff;" aria-hidden="true"></i>
-                    <img src=".\imagePlace.jpg" class="ms-3" style="border-radius:50%;height:38px" />
+                    <img src="@GetUrl(@currentUser.ImageUrl)" class="ms-3" style="border-radius:50%;height:38px" />
                 </div>
-                <div class="ms-3">
-                    <p style="color:#262626ff;font-family: Sora;" @onclick="GoToProfile">@currentUser.Name</p>
+                <div class="ms-3" @onclick="GoToProfile">
+                    <p style="color:#262626ff;font-family: Sora;">@currentUser.Name</p>
                     @if (isTyping)
                     {
                         <p style="color:green;font-size:12px;margin-top:-2px;">Typing</p>
@@ -101,7 +124,7 @@
     else
     {
 
-        <div class="py-5 px-2">
+        <div class="px-3" style="padding-top: 4rem !important; padding-bottom: 3rem !important;">
             <div class="d-flex justify-content-center ">
                 @if (!noMoreData)
                 {
@@ -112,10 +135,6 @@
                             <span class="sr-only">Loading...</span>
                         </div>
 
-                    }
-                    else
-                    {
-                        <button @onclick="LoadMoreMessages" style="font-size:12px;">Show More</button>
                     }
                 }
 
@@ -154,7 +173,7 @@
                         {
                             int index = i;
 
-                            <div @onclick="() => OpenPdf(allMessages[index].Content)" class="pdf-holder" >
+                            <div @onclick="() => OpenPdf(allMessages[index].Content)" class="pdf-holder">
                                 <img src=".\pdfImagePlace2.png" class="pdf-file-icon" />
                                 <div class="d-flex  justify-content-between align-items-center " style="padding:1px;">
                                     <p style="font-size:10px;margin-left:3px;color:white">Pdf</p>
@@ -162,8 +181,8 @@
                                 </div>
 
                             </div>
-                           
-                            
+
+
                         }
 
                     }
@@ -217,7 +236,7 @@
 
                                 </div>
 
-                              
+
                             }
                         }
                         else
@@ -275,47 +294,49 @@
                 </div>
 
             }
-
+            <div @ref="elementRef" style="height:1px;flex-shrink:0"></div>
+          
             <div style="height:@bottomHeight;"></div>
         </div>
     }
     <!-- bottom-->
-    <div style="position:fixed; bottom:0;width:100%;background-color:white;">
+    <div  style="position:fixed; bottom:0;width:100%;background-color:white;">
 
         <div class="d-flex" style="max-width: 90%;margin:auto;padding-bottom:5px;">
             <div class="dropdown">
                 <div class="btn-group dropup">
-                    <button type="button" class="btn " data-bs-toggle="dropdown" aria-expanded="false">
+                    <button type="button" class="btn custom-button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa fa-ellipsis-v" aria-hidden="true" style="font-size: 26px;
     color: #262626ff;"></i>
                     </button>
                     <ul class="dropdown-menu" style="min-width: 0rem;padding: .5rem .5rem;">
                         <li>
-                            <div class=" position-relative">
+                            <div class="document-icon mb-2">
                                 <ImageUpload OnChange="UploadImageUrl" />
-                            </div></li>
+                            </div>
+                        </li>
                         <li>
-                            <div class=" position-relative">
+                            <div class="document-icon">
                                 <PdfUpload OnChange="UploadPdfUrl" />
                             </div>
                         </li>
                     </ul>
                 </div>
             </div>
-            <form onsubmit="@SendNewMessage" style="width: 80%;">
-               
-                    <div class=" d-flex justify-content-center align-items-center send-msg w-100">
-                        <div class="form-group" style="width: 100%;">
-                            <input type="text" @ref="inputElementRef" @onblur="OnUnfocusOnInput" class="custom-input" id="sendMsgInput" @oninput="KeyboardEventHandler" @bind-value="newMessage.Content" aria-describedby="emailHelp" placeholder="Enter Message" style="width: 100%;">
-                        </div>
+            <form onsubmit="@SendNewMessage" style="width: 100%;">
 
-                        <button type="submit" class="btn" > <i class="fa fa-paper-plane-o" style="font-size:24px;" aria-hidden="true"></i></button>
+                <div class=" d-flex justify-content-center align-items-center send-msg w-100">
+                    <div class="form-group" style="width: 100%;">
+                        <input type="text" @ref="inputElementRef" @onblur="OnUnfocusOnInput" class="custom-input" id="sendMsgInput" @oninput="KeyboardEventHandler" @bind-value="newMessage.Content" aria-describedby="emailHelp" placeholder="Enter Message" style="width: 100%;">
+                    </div>
 
-                        </div>
-                   
-              
+                    <button type="submit" class="btn custom-button"> <i class="fa fa-paper-plane-o" style="font-size:24px;" aria-hidden="true"></i></button>
+
+                </div>
+
+
             </form>
-            
+
         </div>
 
     </div>

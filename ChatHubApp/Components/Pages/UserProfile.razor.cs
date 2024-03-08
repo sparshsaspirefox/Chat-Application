@@ -1,4 +1,5 @@
-﻿using ChatHubApp.Services.Account;
+﻿using ChatHubApp.Helpers;
+using ChatHubApp.Services.Account;
 using Data.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
@@ -28,31 +29,16 @@ namespace ChatHubApp.Components.Pages
         {
             await InitializeData();
         }
-        bool isEditable = true;
+        bool isEditable = false;
         bool isEditMode = false;
-
-        private async void EditMode()
-        {
-            isEditMode = true;
-        }
-        private async void UpdateProfile()
-        {
-            isEditMode = false;
-        }
-        private async void CancelEditing()
-        {
-            isEditMode = false;
-        }
-
-
 
         public string loggedUserId = string.Empty;
         private async Task InitializeData()
         {
             loggedUserId = Preferences.Get("UserId", null);
             GenericResponse<UserViewModel> userResponse;
-           
-            if (UserId == string.Empty)
+
+            if (UserId.Equals("SelfProfile"))
             {
                 isEditable = true;
                 userResponse = await accountService.GetUserById(loggedUserId);
@@ -62,25 +48,55 @@ namespace ChatHubApp.Components.Pages
                 userResponse = await accountService.GetUserById(UserId);
             }
             user = userResponse.Data;
-        }
 
-        private int maxAllowedFiles = 1;
-        private long maxFileSize = long.MaxValue;
-        private async Task OnInputFileChange(InputFileChangeEventArgs e)
+            //for form validation
+            user.Password = "Admin@123";
+            user.ConfirmPassword = "Admin@123";
+        }
+        private async void EditMode()
         {
-            using var content = new MultipartFormDataContent();
-            foreach(var file in e.GetMultipleFiles())
-            {
-                var fileContent =  new StreamContent(file.OpenReadStream(maxFileSize));
-                fileContent.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
-
-                content.Add( content:fileContent,name:"\"files\"" ,fileName: file.Name);
-            }
-
+            isEditMode = true;
         }
+
+        bool IsUpdating = false;
+        private async void UpdateProfile()
+        { 
+            IsUpdating = true;
+            await accountService.UpdateProfile(user);
+            isEditMode = false;
+            IsUpdating = false;
+            StateHasChanged();
+        }
+        private async void CancelEditing()
+        {
+            isEditMode = false;
+        }
+
+      
+
+      
         private async Task GoBack()
         {
             await JSRuntime.InvokeVoidAsync("goBack");
         }
+
+        private async Task UploadImageUrl(string ImageUrl)
+        {
+
+            if (string.IsNullOrEmpty(ImageUrl))
+            {
+                return;
+            }
+            user.ImageUrl = ImageUrl;
+            StateHasChanged();
+        }
+
+        string GetUrl(string imageUrl)
+        {
+            if(imageUrl != null) {
+                return AppConstants.staticsFiles.ToString() + imageUrl;
+            }
+            return ".\\imagePlace.jpg";
+        } 
     }
 }

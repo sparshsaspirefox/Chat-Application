@@ -1,4 +1,5 @@
-﻿using ChatHubApp.Services.Group;
+﻿using ChatHubApp.Helpers;
+using ChatHubApp.Services.Group;
 using Data.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
@@ -51,8 +52,17 @@ namespace ChatHubApp.Components.Pages.GroupPages
             var res = await groupService.RemoveUserFromGroup(GroupId, loggedUserId);
             if (res.Success)
             {
+                AppConstants.ActiveTab = "groups";
                 navigationManager.NavigateTo("/groups", replace: true);
             }
+        }
+        string GetUrl(string imageUrl)
+        {
+            if (imageUrl != null)
+            {
+                return AppConstants.staticsFiles.ToString() + imageUrl;
+            }
+            return ".\\imagePlace.jpg";
         }
     }
 }

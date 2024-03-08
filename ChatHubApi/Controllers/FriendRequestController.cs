@@ -78,22 +78,8 @@ namespace ChatHubApi.Controllers
             try
             {
                 string usersId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-                List<FriendShip> allFriends = await _friendRequestRepository.GetAllFriends(userId);
-                List<FriendRequestViewModel> friends = new List<FriendRequestViewModel>();
-                foreach (FriendShip friendship in allFriends)
-                {
-                    friends.Add(new FriendRequestViewModel()
-                    {
-                        FriendShipId = friendship.FriendShipId,
-                        UserId = friendship.UserId,
-                        FriendId = friendship.FriendId,
-                        UnReadMessagesCount = friendship.UnReadMessagesCount,
-                        FriendName = friendship.Friend.Name,
-                        FriendPhoneNumber = friendship.Friend.PhoneNumber,
-                        LastSeen = friendship.Friend.LastSeen
-                    }) ;
+                List<FriendRequestViewModel> friends = await _friendRequestRepository.GetAllFriends(userId); 
 
-                }
                 return Ok(new GenericResponse<List<FriendRequestViewModel>>() { Data = friends });
             }
             catch (Exception ex)

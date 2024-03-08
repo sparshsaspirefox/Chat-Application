@@ -58,7 +58,6 @@ namespace ChatHubApp.Components.Pages
 
         private async Task CreateHubConnection()        
         {
-            Debug.WriteLine("Hub connectinnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn");
             _hubConnection = await ChatHubService.CreateHubConnection();
 
             _hubConnection.On<string>("UpdateMessageCount", (sendTo) =>
@@ -94,7 +93,7 @@ namespace ChatHubApp.Components.Pages
                     Title = message.SenderName,
                     Subtitle = "New Message",
                     Description = description,
-                    BadgeNumber = NotificationCount,
+                    BadgeNumber = 2,
                     Schedule = new NotificationRequestSchedule
                     {
                         NotifyTime = DateTime.Now
@@ -107,13 +106,7 @@ namespace ChatHubApp.Components.Pages
 
         private async Task InitilizeList()
         {
-            Debug.WriteLine("Chat Page----------------------------------------------------");
             _hubConnection = await ChatHubService.CreateHubConnection();
-
-            //GenericResponse<List<UserViewModel>> usersResponse = await _accountService.GetAllUsers();
-            //users = usersResponse.Data.Where(p => p.id != currentUserId).ToList();
-
-
 
             currentUserId = Preferences.Get("UserId", null);
 
@@ -167,6 +160,14 @@ namespace ChatHubApp.Components.Pages
             navigationManager.NavigateTo($"individualChat/{id}/{unreadMessages}");
         }
 
-        
+
+        string GetUrl(string imageUrl)
+        {
+            if (imageUrl != null)
+            {
+                return AppConstants.staticsFiles.ToString() + imageUrl;
+            }
+            return ".\\imagePlace.jpg";
+        }
     }
 }

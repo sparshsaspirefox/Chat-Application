@@ -1,5 +1,6 @@
 ﻿using ChatHubApi.Context;
 using ChatHubApi.Models;
+using Data.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ChatHubApi.Services.FriendRequest
@@ -30,10 +31,22 @@ namespace ChatHubApi.Services.FriendRequest
             return friendShip;
         }
 
-        public async Task<List<FriendShip>> GetAllFriends(string userId)
+        public async Task<List<FriendRequestViewModel>> GetAllFriends(string userId)
         {
-            
-           return await _context.FriendShips.Include(r => r.Friend).Where(r => r.UserId == userId).ToListAsync();
+            IQueryable<FriendRequestViewModel> friends = _context.FriendShips.Where(r => r.UserId == userId).Select(friendship => new FriendRequestViewModel()
+            {
+                FriendShipId = friendship.FriendShipId,
+                UserId = friendship.UserId,
+                FriendId = friendship.FriendId,
+                UnReadMessagesCount = friendship.UnReadMessagesCount,
+                FriendName = friendship.Friend.Name,
+                FriendPhoneNumber = friendship.Friend.PhoneNumber,
+                LastSeen = friendship.Friend.LastSeen,
+                About = friendship.Friend.About,
+                ImageUrl = friendship.Friend.ImageUrl,
+            });
+
+           return friends.ToList();
             
         }
 

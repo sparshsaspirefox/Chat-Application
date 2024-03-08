@@ -12,6 +12,9 @@
     <link rel="icon" type="image/png" href="favicon.png" />
 
     <link rel="stylesheet" href="_content/Radzen.Blazor/css/material-base.css">
+
+    <link href='https://fonts.googleapis.com/css?family=Poppins' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Sora' rel='stylesheet'>
     <!--font awesome-->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
@@ -26,20 +29,24 @@
             window.scrollTo(0, document.body.scrollHeight + 100);
         }
 
-        function onScrollToTop() {
-            DotNet.invokeMethodAsync('ChatHubApp', 'OnScrollToTop');
+        function onScrollToTop(donNetObject) {
+            donNetObject.invokeMethodAsync( 'OnScrollToTop');
 
         }
 
-        //window.onScrollToTop = () => {
-        //    //window.onscroll = function () {
+        
+        //for scroll pagination
+        window.scrollHelper = {
+            initScrollListener: function (dotnetReference) {
+                window.addEventListener('scroll', function () {
+                    if (window.scrollY === 0) {
+                        dotnetReference.invokeMethodAsync('LoadMoreMessages');
+                    }
+                });
+            }
+        };
 
-        //    //    //if (window.pageYOffset <= 0) {
-        //    //    //    // Invoke method in Blazor component
-        //    //    //    dotnetHelper.invokeMethodAsync('OnScrollToTop');
-        //    //    //}
-        //    //};
-        //};
+       
 
 
     </script>

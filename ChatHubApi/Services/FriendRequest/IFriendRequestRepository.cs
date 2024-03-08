@@ -1,4 +1,5 @@
 ﻿using ChatHubApi.Models;
+using Data.Models;
 
 namespace ChatHubApi.Services.FriendRequest
 {
@@ -7,6 +8,6 @@ namespace ChatHubApi.Services.FriendRequest
         public Task<FriendShip> UpdateMessageCount(string senderId, string friendId, bool IsIncrease);
         public Task<int> GetUnReadMessageCount(string senderId, string friendId);
 
-        public Task<List<FriendShip>> GetAllFriends(string userId);
+        public Task<List<FriendRequestViewModel>> GetAllFriends(string userId);
     }
 }

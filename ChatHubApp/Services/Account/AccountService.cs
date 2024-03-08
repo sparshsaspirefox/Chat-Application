@@ -112,5 +112,18 @@ namespace ChatHubApp.Services.Account
                 return new GenericResponse<string> { Success = false, Error = ex.Message };
             }
         }
+
+        async Task<GenericResponse<string>> IAccountService.UpdateProfile(UserViewModel userViewModel)
+        {
+           try
+            {
+                var response = await _apiManager.PostAsync<GenericResponse<string>>(AppConstants.baseAddress + "/Account/UpdateProfile", userViewModel);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new GenericResponse<string> { Success = false, Error = ex.Message };
+            }
+        }
     }
 }

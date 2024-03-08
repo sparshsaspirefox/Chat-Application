@@ -9,7 +9,7 @@ namespace ChatHubApp.Services.ChatHub
 {
     public class ChatHubService : IChatHubService
     {
-        static string baseUrl = "https://5hgrdskg-7074.inc1.devtunnels.ms";
+        static string baseUrl = "https://7mwfwf0g-7074.inc1.devtunnels.ms";
 
         string userToken = string.Empty;
         public HubConnection _hubConnection;

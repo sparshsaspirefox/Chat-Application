@@ -2,20 +2,25 @@
 @layout HomeLayout
 
 
+<style>
+    .content {
+        padding-top: 0;
+    }
+    p{
+        font-family: Sora;
+    }
+</style>
+
 <div class="container p-0">
    
 
     @* header *@
-    <div style="background-color:#7196FF;padding:9px;">
-        <div class="d-flex justify-content-between align-items-center" style="color:white;font-size:22px;">
 
-            <p class="ms-3"> Aspire Chat</p>
-            <div class="d-flex">
-                <i class="fa fa-camera me-3" aria-hidden="true"></i>
-
-            </div>
-        </div>
+    <div class="d-flex justify-content-between align-items-center px-3 py-2">
+        <p style="font-size:32px;"><b>Groups</b></p>
+        <i class="fa fa-plus-circle " style="font-size:26px;" @onclick="NewGroup" aria-hidden="true"></i>
     </div>
+
     @if (@isBusy)
     {
         <div class="d-flex justify-content-center mt-3">
@@ -26,9 +31,7 @@
     }
     else
     {
-
-        <button class="btn btn-primary p-3 mt-3" @onclick="NewGroup">New Group</button>
-        @foreach (var item in groups)
+        @foreach (var(item, index) in groups.Select((group, index) => (group, index)))
         {
 
             <div @onclick="() => GoToGroupChat(item.Id)" class="mx-3 p-2" style="border-radius:5px;">
@@ -51,6 +54,15 @@
                     }
                 </div>
             </div>
+            @if (index != groups.Count() - 1)
+            {
+                <div style="width: 90%; margin:auto;
+                  height: 2px;
+                  opacity: 1;
+                  background-color: rgb(240, 240, 240);
+                  border-radius: 12px ">
+                </div>
+            }
         }
     }
 

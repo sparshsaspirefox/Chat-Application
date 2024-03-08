@@ -1,9 +1,19 @@
 ﻿@page "/profilePage/{UserId}"
 
+@if (isEditable)
+{
+    @layout HomeLayout
+}
 <style>
     p{
         margin:0;
+        font-family: Sora;
     }
+    
+    .content {
+        padding-top: 0;
+    }
+
     .profile-img{
         width:110px;
         height:110px;
@@ -44,34 +54,50 @@
         color:white;
         font-size:17px;
     }
+
+    .validation-error {
+        font-size: 14px;
+        color: red;
+    }
 </style>
 
 <div class="container  p-0">
 
     <!--header -->
-    <div style="background-color:#7196FF;padding:5px;position:fixed;top:0px;width:100%;">
-        <p id="myP"></p>
-        <div class="d-flex justify-content-between align-items-center px-2" style="color:white;font-size:20px;">
-            <div class="d-flex align-items-center" @onclick="GoBack">
-                <i class="fa fa-angle-left" style="font-size:34px;" aria-hidden="true"></i>
-                <p class="ms-3">Profile</p>
-            </div>
 
-            @if (isEditable)
+     @if (isEditable)
+    {
+        <div class="d-flex justify-content-between align-items-center px-3 py-2">
+            <p style="font-size:32px;"><b>Profile</b></p>
+            @if (!isEditMode)
             {
-                <i class="fa fa-pencil edit-icon" @onclick="EditMode" aria-hidden="true"></i>
+                <i class="fa fa-pencil" style="font-size:26px;" @onclick="EditMode" aria-hidden="true"></i>
             }
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="px-3 py-2">
+            <div class="d-flex align-items-center " @onclick="GoBack">
+                <i class="fa fa-angle-left" style="font-size:26px;" aria-hidden="true"></i>
+                <p style="font-size:24px;margin-left: 15px;"><b>Profile</b></p>
+            </div>
+        </div>
+         
+        
+    }
+
+
 
     @* profile image *@
-    <div class="d-flex justify-content-center mt-5">
+    <div class="d-flex justify-content-center mt-2">
         <div class=" position-relative">
-            <img class="profile-img" src=".\imagePlace.jpg" />
+            <img src="@GetUrl(user.ImageUrl)" class="profile-img" />
+           
             @if (isEditMode)
             {
                 <div class="img-edit">
-                    <InputFile OnChange="@OnInputFileChange" />
+                    <ImageUpload OnChange="UploadImageUrl"/>
                     <i class="fa fa-camera camera-icon" aria-hidden="true"></i>
                 </div>
             }
@@ -81,60 +107,78 @@
 
 
     <div class="container p-4">
-        
-        @* name *@
-        <div class="d-flex  align-items-center">
+        <EditForm Model="user" OnValidSubmit="UpdateProfile">
+            <DataAnnotationsValidator />
+            <ValidationSummary/>
+            @* name *@
+            <div class="d-flex  align-items-center">
                 <i class="fa fa-user profile-icon" aria-hidden="true"></i>
                 <div class="ms-3">
                     <p class="profile-lbl">Name</p>
                     @if (isEditMode)
                     {
                         <input type="text" style="border:0px;outline: none; width:100%;" @bind-value="@user.Name" placeholder="Enter name" />
+                        <ValidationMessage class="validation-error" For="@(() => user.Name)" />
                     }
                     else
                     {
                         <p class="profile-field">@user.Name</p>
                     }
-                    
+
                 </div>
 
-        </div>
+            </div>
 
 
-        @* About *@
-        <div class="d-flex  mt-3 align-items-center">
+            @* About *@
+            <div class="d-flex  mt-3 align-items-center">
                 <i class="fa fa-info-circle profile-icon" aria-hidden="true"></i>
                 <div class="ms-3">
                     <p class="profile-lbl">About</p>
                     @if (isEditMode)
                     {
-                        <input type="text" style="border:0px;outline: none; width:100%;" placeholder="Enter name" />
+                        <input type="text" style="border:0px;outline: none; width:100%;" @bind-value="@user.About" placeholder="About Yourself" />
+                        <ValidationMessage class="validation-error" For="@(() => user.About)" />
                     }
                     else
                     {
-                        <p class="profile-field">This field has to update</p>
+                        <p class="profile-field">@user.About</p>
                     }
 
+                </div>
             </div>
-        </div>
 
 
-        @* mobile number *@
-        <div class="d-flex mt-3 align-items-center">
+            @* mobile number *@
+            <div class="d-flex mt-3 align-items-center">
                 <i class="fa fa-phone profile-icon" aria-hidden="true"></i>
                 <div class="ms-3">
                     <p class="profile-lbl">Phone</p>
                     <p class="profile-field">@user.PhoneNumber</p>
                 </div>
-        </div>
-
-        @if (isEditMode)
-        {
-            <div class="d-flex justify-content-center mt-5">
-                <button type="submit" @onclick="UpdateProfile" class="btn me-3" style="background-color:#7196FF;color:white">Save</button>
-                <button type="button" onclick="@CancelEditing" class="btn btn-light ms-3">Cancel</button>
             </div>
-        }
+
+            @if (isEditMode)
+            {
+                @if (IsUpdating)
+                {
+                    <div class="d-flex justify-content-center">
+                        <div class="spinner-border" style="color:#7196FF" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="d-flex justify-content-center mt-5">
+                        <button type="submit" class="btn me-3" style="background-color:#7196FF;color:white">Save</button>
+                        <button type="button" onclick="@CancelEditing" class="btn btn-light ms-3">Cancel</button>
+                    </div>
+                }
+               
+            }
+        </EditForm>
+        
     </div>
 
    
