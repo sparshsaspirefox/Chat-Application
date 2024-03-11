@@ -86,10 +86,10 @@ namespace ChatHubApp.Components.Pages
                 Time = DateTime.Now,
                 NotificationType = NotificationType.FriendRequest.ToString()
             };
-            _notificationService.SendNotification(newRequestNotification);
-
+            await _notificationService.SendNotification(newRequestNotification);
+            userViewModel.FriendStatus = RequestType.Pending.ToString();
           
-            await InitializeList();
+            StateHasChanged();
         }
         string GetUrl(string imageUrl)
         {

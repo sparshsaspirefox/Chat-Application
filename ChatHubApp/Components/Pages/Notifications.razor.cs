@@ -74,14 +74,14 @@ namespace ChatHubApp.Components.Pages
                 }
                 else if(notificationViewModel.NotificationType == NotificationType.GroupRequest.ToString())
                 {
-                    //this is done in backend to and user group matching
+                    //this is done in backend to add user group matching
                 }
                 
 
             }
             notificationViewModel.Status = status.ToString();
             _notificationService.UpdateNotification(notificationViewModel);
-            await InitializeList();
+           // await InitializeList();
             StateHasChanged();
         }
     }

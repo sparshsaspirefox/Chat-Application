@@ -76,6 +76,13 @@
         border:none;
         inset: auto auto 0px -13px !important;
     }
+
+    .user-img {
+        border-radius: 50%;
+        height: 45px;
+        width: 45px;
+        object-fit: cover;
+    }
 </style>
 
 <script>
@@ -92,7 +99,7 @@
             <div class="d-flex align-items-center">
                 <div class="d-flex align-items-center" @onclick="GoBack">
                     <i class="fa fa-angle-left" style="font-size:34px;color:#262626ff;" aria-hidden="true"></i>
-                    <img src="@GetUrl(@currentUser.ImageUrl)" class="ms-3" style="border-radius:50%;height:38px" />
+                    <img src="@GetUrl(@currentUser.ImageUrl)"  class="user-img ms-3" />
                 </div>
                 <div class="ms-3" @onclick="GoToProfile">
                     <p style="color:#262626ff;font-family: Sora;">@currentUser.Name</p>

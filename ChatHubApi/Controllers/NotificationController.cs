@@ -36,7 +36,8 @@ namespace ChatHubApi.Controllers
                     SenderId = notificationViewModel.SenderId,
                     ReceiverId = notificationViewModel.ReceiverId,
                     Time = notificationViewModel.Time,
-                    NotificationType = NotificationType.FriendRequest.ToString()
+                    NotificationType = NotificationType.FriendRequest.ToString(),
+                    IsSeen = false
                 };
                 _notificationRepository.Insert(newNotification);
                 _notificationRepository.Save();
@@ -55,20 +56,7 @@ namespace ChatHubApi.Controllers
             {
                 List<NotificationViewModel> allNotifications = await _notificationRepository.GetAllWithSender(receiverId,IsSender);
                 List<NotificationViewModel> newNotifications = new List<NotificationViewModel>();
-                //foreach (Notification notification in allNotifications)
-                //{
-                //    newNotifications.Add(new NotificationViewModel()
-                //    {
-                //        NotificationId = notification.NotificationId,
-                //        SenderId = notification.SenderId,
-                //        ReceiverId = notification.ReceiverId,
-                //        Time = notification.Time,
-                //        Status = notification.Status,
-                //        SenderName = notification.Sender.Name,
-                //        GroupId = notification.GroupId,
-                //        NotificationType = notification.NotificationType
-                //    }); 
-                //}
+               
                 return Ok(new GenericResponse<List<NotificationViewModel>> { Data = allNotifications });
             }
             catch (Exception ex)
@@ -91,7 +79,8 @@ namespace ChatHubApi.Controllers
                     Status = notification.Status,
                     Time = DateTime.Now,
                     NotificationType = notification.NotificationType,
-                    GroupId = notification.GroupId
+                    GroupId = notification.GroupId,
+                    IsSeen = false
                 };
 
                 //if request is rejected then delete from db and return
@@ -112,7 +101,8 @@ namespace ChatHubApi.Controllers
                     Status = notification.Status,
                     Time = DateTime.Now,
                     NotificationType = notification.NotificationType,
-                    GroupId = notification.GroupId
+                    GroupId = notification.GroupId,
+                    IsSeen = false
                 };
                _notificationRepository.Insert(newNotification);
                 _notificationRepository.Save();
@@ -143,6 +133,22 @@ namespace ChatHubApi.Controllers
                 _userGroupRepository.Save();
             }
             catch { }
+        }
+
+
+        //new notifications count
+        [HttpGet]
+        public async Task<IActionResult> GetNewNotificationsCount(string userId)
+        {
+            try
+            {
+                int newNotificationCount = await _notificationRepository.GetNewNotificationsCount(userId);
+                return Ok(new GenericResponse<int> { Success = true, Data = newNotificationCount });
+            }
+            catch(Exception ex)
+            {
+                return Ok(new GenericResponse<int> { Success = false, Error = ex.Message });
+            }
         }
     }
 }

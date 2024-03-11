@@ -25,5 +25,7 @@ namespace ChatHubApi.Models
         public int? GroupId {  get; set; }
         [ForeignKey("GroupId")]
         public virtual Group? Group { get; set; }
+
+        public bool IsSeen {  get; set; }
     }
 }

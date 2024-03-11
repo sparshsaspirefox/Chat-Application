@@ -65,28 +65,28 @@
     NavigationManager _navigationManager{ get; set; }
     private void navigateToChats()
     {
-        _navigationManager.NavigateTo("/chats");
+        _navigationManager.NavigateTo("/chats", replace: true);
         activeTab = "chats";
     }
 
     private void navigateToAllUsers()
     {
-        _navigationManager.NavigateTo("/allUsers");
+        _navigationManager.NavigateTo("/allUsers", replace: true);
         activeTab = "allUsers";
     }
     private void navigateToStatus()
     {
-        _navigationManager.NavigateTo("/status");
+        _navigationManager.NavigateTo("/status", replace: true);
         activeTab = "status";
     }
     private void navigateToProfile()
     {
-        _navigationManager.NavigateTo($"/profilePage/{"SelfProfile"}");
+        _navigationManager.NavigateTo($"/profilePage/{"SelfProfile"}", replace: true);
         activeTab = "profile";
     }
     private void navigateToGroups()
     {
-        _navigationManager.NavigateTo("/groups");
+        _navigationManager.NavigateTo("/groups", replace: true);
         activeTab = "groups";
     }
 }

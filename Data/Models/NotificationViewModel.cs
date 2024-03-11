@@ -22,5 +22,7 @@ namespace Data.Models
         public string? GroupName {  get; set; }
         public int? GroupId { get; set; }
         public string? NotificationType { get; set; }
+
+        public bool? IsSeen { get; set; }
     }
 }

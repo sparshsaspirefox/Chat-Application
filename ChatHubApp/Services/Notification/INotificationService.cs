@@ -13,5 +13,7 @@ namespace ChatHubApp.Services.Notification
         public Task<GenericResponse<List<NotificationViewModel>>> GetAllNotifications(string receiverId,bool IsSender);
 
         public Task<GenericResponse<string>> UpdateNotification(NotificationViewModel data);
+
+        public Task<GenericResponse<int>> GetNewNotificationsCount(string userId);
     }
 }

@@ -2,8 +2,11 @@
 using ChatHubApp.Services.ChatHub;
 using CommunityToolkit.Maui.Alerts;
 using CommunityToolkit.Maui.Core;
+using Data.Enums;
 using Data.Models;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.SignalR.Client;
+using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -30,9 +33,14 @@ namespace ChatHubApp.Components.Pages
         [Inject]
         IChatHubService chatHubService { get; set; }
 
+        private HubConnection _hubConnection;
         protected override async Task OnInitializedAsync()
         {
-            //isBusy = false;
+            //if (Preferences.ContainsKey("Token"))
+            //{
+            //    await chatHubService.CreateHubConnection();
+            //    navigationManager.NavigateTo("chats", replace: true);
+            //}
         }
         
         private async Task LoginUser()   
@@ -47,8 +55,9 @@ namespace ChatHubApp.Components.Pages
                 Preferences.Set("Token", response.Message);
                 Preferences.Set("UserId", response.Error);
                 Preferences.Set("UserName", response.Data);
-                await chatHubService.CreateHubConnection();
-                navigationManager.NavigateTo("chats");
+                await CreateHubConnection();
+              //  await chatHubService.CreateHubConnection();
+                navigationManager.NavigateTo("chats",replace:true);
             }
             else
             {
@@ -57,6 +66,42 @@ namespace ChatHubApp.Components.Pages
             isBusy = false;
            
         }
+
+        private async Task CreateHubConnection()
+        {
+            _hubConnection = await chatHubService.CreateHubConnection();
+            _hubConnection.On<MessageViewModel>("SendNotification", (message) =>
+            {
+                string description = string.Empty;
+                if (message.ContentType == MessageType.Written.ToString())
+                {
+                    description = message.Content;
+                }
+                else if (message.ContentType == MessageType.Image.ToString())
+                {
+                    description = "New Image";
+                }
+                else
+                {
+                    description = "New document";
+                }
+                Random rnd = new Random();
+                var request = new NotificationRequest
+                {
+                    NotificationId = rnd.Next(999999),
+                    Title = message.SenderName,
+                    Subtitle = "New Message",
+                    Description = description,
+                    BadgeNumber = 2,
+                    Schedule = new NotificationRequestSchedule
+                    {
+                        NotifyTime = DateTime.Now
+                    }
+                };
+                LocalNotificationCenter.Current.Show(request);
+            });
+        }
+
         private void GoToRegister()
         {
             navigationManager.NavigateTo("register");

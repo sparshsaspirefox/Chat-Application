@@ -1,5 +1,6 @@
 ﻿using ChatHubApp.Helpers;
 using ChatHubApp.Services.Account;
+using ChatHubApp.Services.Audio;
 using ChatHubApp.Services.ChatHub;
 using ChatHubApp.Services.FriendShip;
 using ChatHubApp.Services.Message;
@@ -55,7 +56,8 @@ namespace ChatHubApp.Components.Pages
         [Inject]
         IJSRuntime JSRuntime { get; set; }
 
-
+        [Inject]
+        IAudioService audioService { get; set; }    
 
         bool isBusy = false;
         bool isLoadingMore = false;
@@ -71,7 +73,6 @@ namespace ChatHubApp.Components.Pages
         {
             await CreateHubConnection();
             await IntializeList();
-           // await JSRuntime.InvokeVoidAsync("onScrollToTop");
 
         }
         private ElementReference inputElementRef;
@@ -90,11 +91,7 @@ namespace ChatHubApp.Components.Pages
                 await JSRuntime.InvokeVoidAsync("scrollHelper.initScrollListener", DotNetObjectReference.Create(this));
             }
         }
-
-
         
-
-        int NotificationCount = 1;
         private async Task CreateHubConnection()
         {
             
@@ -198,6 +195,7 @@ namespace ChatHubApp.Components.Pages
         }
         private async Task GoToProfile()
         {
+            await _hubConnection.SendAsync("RemoveActiveChats", loggedUserId, UserId);
             navigationManager.NavigateTo($"profilePage/{UserId}");
         }
         private async Task SendNewMessage()
@@ -330,6 +328,37 @@ namespace ChatHubApp.Components.Pages
 
             return ".\\imagePlace.jpg";
         }
-        
+
+
+
+        //for voice recording
+        public async void StartRecording()
+        {
+            if (await Permissions.RequestAsync<Permissions.Microphone>() != PermissionStatus.Granted)
+            {
+                // Inform user to request permission
+            }
+            else
+            {
+                await audioService.StartRecordingAsync();
+
+            }
+
+        }
+        Stream recordedAudioStream;
+        public async void StopRecording()
+        {
+            recordedAudioStream = await audioService.StopRecordingAsync();
+
+
+            var audioBytes = new byte[recordedAudioStream.Length];
+            await recordedAudioStream.ReadAsync(audioBytes, 0, (int)recordedAudioStream.Length);
+            var base64String = Convert.ToBase64String(audioBytes);
+
+
+            AudioSource = $"data:audio/mpeg;base64,{base64String}";
+            StateHasChanged();
+
+        }
     }
 }

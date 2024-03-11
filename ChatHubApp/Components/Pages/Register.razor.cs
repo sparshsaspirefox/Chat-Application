@@ -26,18 +26,25 @@ namespace ChatHubApp.Components.Pages
         bool isBusy = false;
         [Inject]
         IJSRuntime JSRuntime { get; set; }
+
+        string errorMessage = string.Empty;
+        protected override async Task OnInitializedAsync()
+        {
+            userViewModel.About = "forformvalidation";
+        }
         private async Task RegisterUser()
         {
             isBusy = true;
+            errorMessage = string.Empty;
             CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
-            string text = "Please wait ";
-            ToastDuration duration = ToastDuration.Short;
-            double fontSize = 14;
+            //string text = "Please wait ";
+            //ToastDuration duration = ToastDuration.Short;
+            //double fontSize = 14;
 
-            var toast = Toast.Make(text, duration, fontSize);
+            //var toast = Toast.Make(text, duration, fontSize);
 
-            await toast.Show(cancellationTokenSource.Token);
+            //await toast.Show(cancellationTokenSource.Token);
             var response = await _register.RegisterUser(userViewModel);
 
              if(response.Success == true) {
@@ -51,7 +58,11 @@ namespace ChatHubApp.Components.Pages
 
                 await toast2.Show(cancellationTokenSource2.Token);
 
-                navigationManager.NavigateTo("/");
+                navigationManager.NavigateTo("/",replace: true);
+            }
+            else
+            {
+                errorMessage = response.Error;
             }
              isBusy= false;
         }

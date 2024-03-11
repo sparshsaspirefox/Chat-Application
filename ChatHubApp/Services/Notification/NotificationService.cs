@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace ChatHubApp.Services.Notification
 {
@@ -53,6 +54,19 @@ namespace ChatHubApp.Services.Notification
             catch (Exception ex)
             {
                 return new GenericResponse<string> { Success = false, Error = ex.Message };
+            }
+        }
+
+        async Task<GenericResponse<int>> INotificationService.GetNewNotificationsCount(string userId)
+        {
+            try
+            {
+                var response = await _apiManager.GetAsync<GenericResponse<int>>(AppConstants.baseAddress + "/Notification/GetNewNotificationsCount?userId=" + userId);
+                return response;
+            }
+            catch (Exception ex)
+            {
+                return new GenericResponse<int> { Success = false, Error = ex.Message };
             }
         }
     }

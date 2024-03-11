@@ -3,11 +3,11 @@ using ChatHubApp.Helpers;
 using ChatHubApp.Services.Account;
 using ChatHubApp.Services.ChatHub;
 using ChatHubApp.Services.FriendShip;
+using ChatHubApp.Services.Notification;
 using Data.Enums;
 using Data.Models;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.SignalR.Client;
-using Plugin.LocalNotification;
 using Radzen;
 using System;
 using System.Collections.Generic;
@@ -33,6 +33,8 @@ namespace ChatHubApp.Components.Pages
         [Inject]
         IFriendService _friendService { get; set; }
 
+        [Inject]
+        INotificationService _notificationService { get; set; }
        
         bool isBusy = false;
         [Inject]
@@ -44,15 +46,12 @@ namespace ChatHubApp.Components.Pages
 
         public List<UserViewModel> friendsDetails = new List<UserViewModel>();
 
-        int NotificationCount = 1;
+        int newNotificationCount = 0;
         protected override async Task OnInitializedAsync()
         {
             isBusy = true;
             await InitilizeList();
             await CreateHubConnection();
-
-            NotificationCount = 1;
-
             isBusy = false;
         }
 
@@ -71,37 +70,7 @@ namespace ChatHubApp.Components.Pages
                 }
                 this.InvokeAsync(() => this.StateHasChanged());
             });
-            _hubConnection.On<MessageViewModel>("SendNotification", (message) =>
-            {
-                string description = string.Empty;
-                if (message.ContentType == MessageType.Written.ToString())
-                {
-                    description = message.Content;
-                }
-                else if (message.ContentType == MessageType.Image.ToString())
-                {
-                    description = "New Image";
-                }
-                else
-                {
-                    description = "New document";
-                }
-                Random rnd = new Random();
-                var request = new NotificationRequest
-                {
-                    NotificationId = rnd.Next(999999),
-                    Title = message.SenderName,
-                    Subtitle = "New Message",
-                    Description = description,
-                    BadgeNumber = 2,
-                    Schedule = new NotificationRequestSchedule
-                    {
-                        NotifyTime = DateTime.Now
-                    }
-                };
-                NotificationCount++;
-                LocalNotificationCenter.Current.Show(request);
-            });
+            
         }
 
         private async Task InitilizeList()
@@ -113,6 +82,10 @@ namespace ChatHubApp.Components.Pages
             await _hubConnection.SendAsync("GetAllActiveUsers");
             GenericResponse<List<FriendRequestViewModel>> friendsResponse = await _friendService.GetAllFriends(currentUserId);
             friends = friendsResponse.Data;
+
+            var notificationRes = await _notificationService.GetNewNotificationsCount(currentUserId);
+
+            if (notificationRes.Success) newNotificationCount = notificationRes.Data;
 
             await UpdateActiveUsers();
 

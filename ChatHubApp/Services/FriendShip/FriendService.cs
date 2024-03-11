@@ -30,7 +30,7 @@ namespace ChatHubApp.Services.FriendShip
         {
             _chatHubService = chatHubService;
             _apiManager = apiManager;
-            Task.Run(async () => await CreateHubConnection()).Wait();
+            Task.Run(async () => await CreateHubConnection());
         }
         private async Task CreateHubConnection()
         {

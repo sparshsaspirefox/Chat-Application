@@ -18,7 +18,7 @@
 
     <div class="d-flex justify-content-between align-items-center px-3 py-2">
         <p style="font-size:32px;"><b>Groups</b></p>
-        <i class="fa fa-plus-circle " style="font-size:26px;" @onclick="NewGroup" aria-hidden="true"></i>
+        <i class="fa fa-plus-circle " style="font-size:30px;" @onclick="NewGroup" aria-hidden="true"></i>
     </div>
 
     @if (@isBusy)
@@ -42,7 +42,7 @@
                         </div>
                         <div class="ms-2">
                             <p style="font-size:16px;">@item.Name</p>
-                            <p style="font-size:14px;color:	#999999;">Last Seen: @item.Description</p>
+                            <p style="font-size:14px;color:	#999999;"> @item.Description</p>
                         </div>
                     </div>
                     @if (@item.UnreadMessageCount != 0)

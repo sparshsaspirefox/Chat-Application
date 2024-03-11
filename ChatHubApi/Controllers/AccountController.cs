@@ -60,7 +60,7 @@ namespace ChatHubApi.Controllers
             User userExist = await _userManager.FindByNameAsync(userViewModel.PhoneNumber);
             if (userExist != null)
             {
-                return Ok(new GenericResponse<string> { Success = false, Error = "Mobile number already exists" }); ;
+                return Ok(new GenericResponse<string> { Success = false, Error = "Mobile number already used" }); ;
             }
             try
             {
@@ -89,7 +89,7 @@ namespace ChatHubApi.Controllers
             }
             else
             {
-                return Ok(new GenericResponse<string> { Success = false, Error = "Invalid UserName or Password" });
+                return Ok(new GenericResponse<string> { Success = false, Error = "Invalid credientials" });
             }
         }
 

@@ -205,7 +205,7 @@ namespace ChatHubApi.Hubs
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
             string userId = Context.User.FindFirstValue(ClaimTypes.NameIdentifier);
-            //await DisconnectOnLogout();
+            await DisconnectOnLogout();
 
         }
 
