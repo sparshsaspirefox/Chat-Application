@@ -1,10 +1,35 @@
 ﻿@page "/newGroup"    
 
-<div class="container p-0">
+<style>
+
+    .rz-dialog:not(.rz-dialog-confirm):not(.rz-dialog-alert) {
+        /* position: absolute;*/
+        width: 80% !important;
+        height:fit-content !important;
+        top: 20% !important;
+        border-radius: 16px;
+    }
+
+    .rz-dialog-title {
+        font-weight: var(--rz-dialog-title-font-weight);
+        letter-spacing: var(--rz-dialog-title-letter-spacing);
+        color: #F0F0F0;
+        margin-left: 16px;
+    }
+
+    .rz-dialog-titlebar {
+        background-color: #262626ff;
+        padding: 13px;
+        font-size: var(--rz-dialog-title-font-size);
+        line-height: var(--rz-dialog-title-line-height);
+        border-bottom: var(--rz-dialog-title-border);
+    }
+</style>
+<div class="container p-0 " style="font-family:Sora;">
     
     <RadzenTemplateForm TItem="GroupViewModel" Data=@newGroup Submit=@OnSubmit >
 
-        <RadzenRow AlignItems="AlignItems.End" Wrap="FlexWrap.Wrap" Gap="1rem" Class="rz-p-sm-12">
+        <RadzenRow AlignItems="AlignItems.Center" Wrap="FlexWrap.Wrap" Gap="1rem" Class="rz-p-sm-12">
             <RadzenColumn Size="12" SizeMD="6" SizeLG="6">
                 <RadzenFormField Text="Group Name" Style="width: 100%;" Component="GroupName">
                     <RadzenTextBox @bind-Value="@newGroup.Name" Name="GroupName" Style="width: 100%;" />
@@ -24,7 +49,7 @@
                             LoadData=@LoadData AllowFiltering="true" Multiple=true
                             Data=@users TextProperty="Name" ValueProperty="id" Placeholder="Select peoples" Style="width: 100%; max-width: 400px;" Name="DropDownFilteringLoadData" />
 
-            <RadzenButton ButtonType="ButtonType.Submit" Text="Submit"></RadzenButton>
+            <RadzenButton ButtonType="ButtonType.Submit" Style="background-color:#F0F0F0;color:#262626ff" Text="Create"></RadzenButton>
         </RadzenRow>
     </RadzenTemplateForm>
 </div>

@@ -10,7 +10,8 @@ namespace Data.Enums
     {
         Written,
         Image,
-        Pdf
+        Pdf,
+        Voice
 
     }
 }

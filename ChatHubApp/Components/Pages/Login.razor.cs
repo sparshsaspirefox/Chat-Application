@@ -43,7 +43,7 @@ namespace ChatHubApp.Components.Pages
             //}
         }
         
-        private async Task LoginUser()   
+        private async void LoginUser()   
         {
             isBusy = true;
 
@@ -64,7 +64,7 @@ namespace ChatHubApp.Components.Pages
                 errorMessage = response.Error;
             }
             isBusy = false;
-           
+            StateHasChanged();
         }
 
         private async Task CreateHubConnection()

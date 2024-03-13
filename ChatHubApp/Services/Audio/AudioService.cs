@@ -20,7 +20,12 @@ namespace ChatHubApp.Services.Audio
             
         public async Task StartRecordingAsync()
         {
-            await _audioRecorder.StartAsync();
+            try
+            {
+                await _audioRecorder.StartAsync();
+            }
+            catch {}
+            
         }
 
         public async Task<Stream> StopRecordingAsync()

@@ -11,7 +11,8 @@ namespace Data.Models
     {
         public int MessageId { get; set; }
         public DateTime Time { get; set; }
-        public string Content { get; set; }
+        public string? Content { get; set; }
+        public byte[]? ContentData { get; set; }
         public string? ContentType { get; set; }
 
         public string? SenderId { get; set; }

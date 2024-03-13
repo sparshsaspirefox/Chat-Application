@@ -29,7 +29,8 @@ namespace ChatHubApi.Controllers
                 SenderId = messageViewModel.SenderId,
                 ReceiverId = messageViewModel.ReceiverId,
                 Time = messageViewModel.Time,
-                ContentType = messageViewModel.ContentType
+                ContentType = messageViewModel.ContentType,
+                ContentData = messageViewModel.ContentData,
             };
             try
             {
@@ -60,7 +61,8 @@ namespace ChatHubApi.Controllers
                         ReceiverId = message.ReceiverId,
                         Time = message.Time,
                         Content = message.Content,
-                        ContentType = message.ContentType
+                        ContentType = message.ContentType,
+                        ContentData = message.ContentData,
                     });
                 }
                 return Ok(new GenericResponse<List<MessageViewModel>> { Data = messages});

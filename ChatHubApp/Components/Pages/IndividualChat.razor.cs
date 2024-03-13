@@ -2,6 +2,7 @@
 using ChatHubApp.Services.Account;
 using ChatHubApp.Services.Audio;
 using ChatHubApp.Services.ChatHub;
+using ChatHubApp.Services.FileUpload;
 using ChatHubApp.Services.FriendShip;
 using ChatHubApp.Services.Message;
 using CommunityToolkit.Maui.Core.Platform;
@@ -14,8 +15,10 @@ using Microsoft.JSInterop;
 using Plugin.LocalNotification;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Mime;
 using System.Reflection;
 using System.Security.Claims;
@@ -57,7 +60,10 @@ namespace ChatHubApp.Components.Pages
         IJSRuntime JSRuntime { get; set; }
 
         [Inject]
-        IAudioService audioService { get; set; }    
+        IAudioService audioService { get; set; }
+
+        [Inject]
+        public IFileUploadService fileUploadService { get; set; }
 
         bool isBusy = false;
         bool isLoadingMore = false;
@@ -221,19 +227,71 @@ namespace ChatHubApp.Components.Pages
             await SendMessage(imgUrl, MessageType.Image);
 
         }
+        bool IsRecordingInProgress = false;
+        //for voice recording
+        public async void StartRecording()
+        {
+            if (await Permissions.RequestAsync<Permissions.Microphone>() != PermissionStatus.Granted)
+            {
+                // Inform user to request permission
+            }
+            else
+            {
+                IsRecordingInProgress = true;
+                await audioService.StartRecordingAsync();
+                StartTimer();
+                StateHasChanged();
+            }
 
+        }
+        Stream recordedAudioStream;
 
-        private async Task SendMessage(string documentUrl = null,MessageType messageType = MessageType.Written)
+        bool IsVoiceLoading = false;
+        public async void StopRecording()
+        {
+            IsVoiceLoading = true;
+            IsRecordingInProgress = false;
+            recordedAudioStream = await audioService.StopRecordingAsync();
+            StateHasChanged();
+            var random = new Random();
+            string fileName = "voice" + random.Next(999999999) + ".mp3";
+            var content = new MultipartFormDataContent();
+            content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+            content.Add(new StreamContent(recordedAudioStream, Convert.ToInt32(recordedAudioStream.Length)), "voice", fileName);
+            var res = await fileUploadService.UploadDocument(content);
+          
+            if (res.Success)
+            {
+                await SendMessage(res.Message, MessageType.Voice);
+                IsVoiceLoading = false;
+                StateHasChanged();
+            }
+        }
+        string VoiceRecordingTimer = string.Empty;
+        public  async Task StartTimer()
+        {
+            int timeInSecs = 0;
+            while (IsRecordingInProgress)
+            {
+                await Task.Delay(1000);
+                timeInSecs++;
+                VoiceRecordingTimer = String.Format("{0:00}:{1:00}",timeInSecs/60, timeInSecs%60);
+                StateHasChanged();
+            }
+            VoiceRecordingTimer = string.Empty;
+
+        }
+        private async Task SendMessage(string documentUrl = "",MessageType messageType = MessageType.Written)
         {
             if (!String.IsNullOrEmpty(documentUrl))
             {
                 newMessage.Content = documentUrl;
             }
-
             if (string.IsNullOrEmpty(newMessage.Content.Trim()))
             {
                 return;
             }
+
             try
             {
                 newMessage.ReceiverId = this.UserId;
@@ -278,9 +336,21 @@ namespace ChatHubApp.Components.Pages
             }
             DocumentViewer.OpenDocumentInViewer(pdfDocumentInBytes);
         }
+
+        private async Task OpenImage(string imageUrl)
+        {
+            string fullImageUrl = GetUrl(imageUrl);
+            string EncodedUrl = System.Web.HttpUtility.UrlEncode(imageUrl);
+        //    string url = imageUrl.Replace('', "UNDERSCORE");
+            navigationManager.NavigateTo($"image/{EncodedUrl}");
+        }
+        private string ConvertUrlToString(string documentUrl)
+        {
+            return GetUrl(documentUrl);
+        }
+       
+
         private bool noMoreData = false;
-
-
 
         [JSInvokable]
         public async Task LoadMoreMessages()
@@ -290,7 +360,6 @@ namespace ChatHubApp.Components.Pages
             StateHasChanged();
             pageNo++;
             var response = await _messageService.GetMessagesByFilter(loggedUserId, UserId, pageNo);
-            //  List<MessageViewModel> moreMessages = response.Data;
             if (response.Data.Count == 0)
             {
                 noMoreData = true;
@@ -330,35 +399,5 @@ namespace ChatHubApp.Components.Pages
         }
 
 
-
-        //for voice recording
-        public async void StartRecording()
-        {
-            if (await Permissions.RequestAsync<Permissions.Microphone>() != PermissionStatus.Granted)
-            {
-                // Inform user to request permission
-            }
-            else
-            {
-                await audioService.StartRecordingAsync();
-
-            }
-
-        }
-        Stream recordedAudioStream;
-        public async void StopRecording()
-        {
-            recordedAudioStream = await audioService.StopRecordingAsync();
-
-
-            var audioBytes = new byte[recordedAudioStream.Length];
-            await recordedAudioStream.ReadAsync(audioBytes, 0, (int)recordedAudioStream.Length);
-            var base64String = Convert.ToBase64String(audioBytes);
-
-
-            AudioSource = $"data:audio/mpeg;base64,{base64String}";
-            StateHasChanged();
-
-        }
     }
 }

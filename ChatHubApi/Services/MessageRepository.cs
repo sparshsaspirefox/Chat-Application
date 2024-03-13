@@ -15,23 +15,20 @@ namespace ChatHubApi.Services
         public List<MessageViewModel> GetMessagesByFilter(string senderId, string receiverId, int pageNo)
         {
             int NoOfMessagesPerPage = 20;
-            List<Message> filteredMessages = _context.Messages.OrderByDescending(m => m.Time).Where(m => (m.SenderId == senderId && m.ReceiverId == receiverId) ||
-                                m.SenderId == receiverId && m.ReceiverId == senderId).Skip((pageNo - 1) * NoOfMessagesPerPage).Take(NoOfMessagesPerPage).ToList();
-
-            List<MessageViewModel> messages = new List<MessageViewModel>();
-            foreach (Message message in filteredMessages)
-            {
-                messages.Add(new MessageViewModel()
+            IQueryable<MessageViewModel> filteredMessages = _context.Messages.OrderByDescending(m => m.Time).Where(m => (m.SenderId == senderId && m.ReceiverId == receiverId) ||
+                                m.SenderId == receiverId && m.ReceiverId == senderId).Skip((pageNo - 1) * NoOfMessagesPerPage).Take(NoOfMessagesPerPage).Select(
+                message => new MessageViewModel()
                 {
                     MessageId = message.MessageId,
                     SenderId = message.SenderId,
                     ReceiverId = message.ReceiverId,
                     Time = message.Time,
                     Content = message.Content,
-                    ContentType = message.ContentType
+                    ContentType = message.ContentType,
+                    ContentData = message.ContentData
                 });
-            }
-            return messages;
+
+            return filteredMessages.ToList();
         }
     }
 }

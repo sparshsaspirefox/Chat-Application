@@ -1,4 +1,5 @@
-﻿using ChatHubApp.Services.FriendShip;
+﻿using ChatHubApp.Helpers;
+using ChatHubApp.Services.FriendShip;
 using ChatHubApp.Services.Notification;
 using Data.Enums;
 using Data.Models;
@@ -44,6 +45,7 @@ namespace ChatHubApp.Components.Pages
         }
         private async Task GoBack()
         {
+            AppConstants.ActiveTab = "chats";
             await JSRuntime.InvokeVoidAsync("goBack");
         }
 

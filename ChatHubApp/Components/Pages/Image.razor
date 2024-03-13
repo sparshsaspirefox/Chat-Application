@@ -1,0 +1,61 @@
+﻿@page "/image/{ImageUrl}"
+
+<style>
+    .content {
+        padding-top: 0;
+    }
+    .full-img{
+        object-fit: contain;
+       
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .back-icon-holder{
+        width:40px;
+        height:40px;
+        border-radius:50%;
+        position:absolute;
+        top:20px;
+        right:20px;
+        background-color: #F0F0F0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .cross-icon{
+        font-size:30px;
+        color: #262626ff;
+    }
+</style>
+
+<div class="position-relative">
+    <img src="@fullUrl" class="full-img" />
+    <div class="back-icon-holder" @onclick="GoBack">
+        <i class="fa fa-times cross-icon" aria-hidden="true"></i>
+    </div>
+   
+</div>
+
+
+
+@code {
+    [Inject]
+    IJSRuntime JSRuntime { get; set; }
+    [Parameter]
+    public string ImageUrl{ get; set; }
+
+    string fullUrl = string.Empty;
+    protected override async Task OnInitializedAsync()
+    {
+        // string encodedUrl = "http://example.com/resource?name=John%2FDoe";
+        string decodedUrl = System.Web.HttpUtility.UrlDecode(ImageUrl);
+        fullUrl = AppConstants.staticsFiles.ToString() + decodedUrl;
+    }
+    private async Task GoBack()
+    {
+        await JSRuntime.InvokeVoidAsync("goBack");
+    }
+
+}

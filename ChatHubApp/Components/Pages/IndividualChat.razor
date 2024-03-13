@@ -21,13 +21,14 @@
     }
 
 
-    .custom-button:focus{
-        box-shadow:none !important;
+    .custom-button:focus {
+        box-shadow: none !important;
     }
 
     .custom-button:active {
         box-shadow: none !important;
     }
+
     .pdf-holder {
         background-color: #ADDAFA;
         border-radius: 8px;
@@ -63,7 +64,6 @@
     }
 
     .document-icon {
-       
         border-radius: 50%;
         background-color: #F0F0F0;
         width: 46px;
@@ -72,8 +72,9 @@
         justify-content: center;
         align-items: center;
     }
+
     .dropdown-menu {
-        border:none;
+        border: none;
         inset: auto auto 0px -13px !important;
     }
 
@@ -82,6 +83,17 @@
         height: 45px;
         width: 45px;
         object-fit: cover;
+    }
+
+    .voice-icon-holder {
+        border-radius: 50%;
+        background-color: #F0F0F0;
+        width: 45px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 6px;
     }
 </style>
 
@@ -93,13 +105,13 @@
 <div class="container p-0" style="height:100%">
 
     <!--header -->
-    <div style="background-color:#F0F0F0;padding:5px;position:fixed;top:0px;width:100%;">
+    <div style="background-color:#F0F0F0;padding:5px;position:fixed;top:0px;width:100%;z-index:999;">
         <p id="myP"></p>
         <div class="d-flex justify-content-between align-items-center px-2" style="color:white;font-size:20px;">
             <div class="d-flex align-items-center">
                 <div class="d-flex align-items-center" @onclick="GoBack">
                     <i class="fa fa-angle-left" style="font-size:34px;color:#262626ff;" aria-hidden="true"></i>
-                    <img src="@GetUrl(@currentUser.ImageUrl)"  class="user-img ms-3" />
+                    <img src="@GetUrl(@currentUser.ImageUrl)" class="user-img ms-3" />
                 </div>
                 <div class="ms-3" @onclick="GoToProfile">
                     <p style="color:#262626ff;font-family: Sora;">@currentUser.Name</p>
@@ -122,7 +134,7 @@
     @if (@isBusy)
     {
         <div class="d-flex justify-content-center" style="margin-top:50px;">
-            <div class="spinner-border" style="color:#7196FF" role="status">
+            <div class="spinner-border" style="color:#262626ff" role="status">
                 <span class="sr-only">Loading...</span>
             </div>
         </div>
@@ -168,7 +180,8 @@
                         }
                         else if (allMessages[i].ContentType == MessageType.Image.ToString())
                         {
-                            <div style="background-color:#ADDAFA; border-radius:8px; max-width:70%;padding:2px;">
+                            int index = i;
+                            <div @onclick="() => OpenImage(allMessages[index].Content)" style="background-color:#ADDAFA;  border-radius:8px; max-width:70%;padding:2px;" >
                                 <img src="@GetUrl(allMessages[i].Content)" class="msg-img" />
                                 <div class="d-flex  justify-content-end align-items-center " style="padding:1px;">
                                     <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("HH:mm")</span>
@@ -176,7 +189,7 @@
 
                             </div>
                         }
-                        else
+                        else if (allMessages[i].ContentType == MessageType.Pdf.ToString())
                         {
                             int index = i;
 
@@ -186,10 +199,15 @@
                                     <p style="font-size:10px;margin-left:3px;color:white">Pdf</p>
                                     <p style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("HH:mm")</p>
                                 </div>
-
                             </div>
+                        }
+                        else
+                        {
+                            int index = i;
 
-
+                            <audio controls src="@ConvertUrlToString(allMessages[index].Content)">
+                                Your browser does not support the audio element.
+                            </audio>
                         }
 
                     }
@@ -212,7 +230,8 @@
                             }
                             else if (allMessages[i].ContentType == MessageType.Image.ToString())
                             {
-                                <div style="background-color:#ADDAFA; border-radius:8px; max-width:70%;padding:2px;">
+                                int index = i;
+                                <div @onclick="() => OpenImage(allMessages[index].Content)" style="background-color:#ADDAFA; border-radius:8px; max-width:70%;padding:2px;">
                                     <img src="@GetUrl(allMessages[i].Content)" class="msg-img" />
                                     <div class="d-flex  justify-content-end align-items-center " style="padding:1px;">
                                         <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("HH:mm")</span>
@@ -224,7 +243,7 @@
 
                                 </div>
                             }
-                            else
+                            else if (allMessages[i].ContentType == MessageType.Pdf.ToString())
                             {
                                 int index = i;
 
@@ -242,8 +261,14 @@
                                     </div>
 
                                 </div>
+                            }
+                            else
+                            {
+                                int index = i;
 
-
+                                <audio controls src="@ConvertUrlToString(allMessages[index].Content)">
+                                    Your browser does not support the audio element.
+                                </audio>
                             }
                         }
                         else
@@ -263,7 +288,8 @@
                             }
                             else if (allMessages[i].ContentType == MessageType.Image.ToString())
                             {
-                                <div style="background-color:#ADDAFA; border-radius:8px; max-width:70%;padding:2px;">
+                                int index = i;
+                                <div @onclick="() => OpenImage(allMessages[index].Content)" style="background-color:#ADDAFA; border-radius:8px; max-width:70%;padding:2px;">
                                     <img src="@GetUrl(allMessages[i].Content)" class="msg-img" />
                                     <div class="d-flex  justify-content-end align-items-center" style="padding:1px;">
                                         <span style="font-size:10px;margin-right:3px;">@allMessages[i].Time.ToString("HH:mm")</span>
@@ -275,7 +301,7 @@
 
                                 </div>
                             }
-                            else
+                            else if (allMessages[i].ContentType == MessageType.Pdf.ToString())
                             {
 
                                 int index = i;
@@ -295,54 +321,102 @@
 
                                 </div>
                             }
+                            else
+                            {
+                                int index = i;
+
+                                <audio controls src="@ConvertUrlToString(allMessages[index].Content)">
+                                    Your browser does not support the audio element.
+                                </audio>
+                            }
                         }
                     }
 
                 </div>
 
             }
-            <div @ref="elementRef" style="height:1px;flex-shrink:0"></div>
-          
+
+
+
             <div style="height:@bottomHeight;"></div>
         </div>
     }
     <!-- bottom-->
-    <div  style="position:fixed; bottom:0;width:100%;background-color:white;">
-
+    <div style="position:fixed; bottom:0;width:100%;background-color:white;">
         <div class="d-flex" style="max-width: 90%;margin:auto;padding-bottom:5px;">
-            <div class="dropdown">
-                <div class="btn-group dropup">
-                    <button type="button" class="btn custom-button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa fa-ellipsis-v" aria-hidden="true" style="font-size: 26px;
-    color: #262626ff;"></i>
-                    </button>
-                    <ul class="dropdown-menu" style="min-width: 0rem;padding: .5rem .5rem;">
-                        <li>
-                            <div class="document-icon mb-2">
-                                <ImageUpload OnChange="UploadImageUrl" />
-                            </div>
-                        </li>
-                        <li>
-                            <div class="document-icon">
-                                <PdfUpload OnChange="UploadPdfUrl" />
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <form onsubmit="@SendNewMessage" style="width: 100%;">
 
-                <div class=" d-flex justify-content-center align-items-center send-msg w-100">
-                    <div class="form-group" style="width: 100%;">
-                        <input type="text" @ref="inputElementRef" @onblur="OnUnfocusOnInput" class="custom-input" id="sendMsgInput" @oninput="KeyboardEventHandler" @bind-value="newMessage.Content" aria-describedby="emailHelp" placeholder="Enter Message" style="width: 100%;">
+            @if (IsRecordingInProgress)
+            {
+                <div style="display: flex;
+                                width: 100%;
+                                justify-content: flex-end;
+                                align-items: center;">
+                    <p style="color:#FF8642">@VoiceRecordingTimer</p>
+                </div>
+
+
+            }
+            else
+            {
+
+                <form onsubmit="@SendNewMessage" style="width: 100%;">
+
+                    <div class=" d-flex justify-content-center align-items-center send-msg w-100">
+                        <div class="form-group" style="width: 100%;">
+                            <input type="text" @ref="inputElementRef" @onblur="OnUnfocusOnInput" class="custom-input" id="sendMsgInput" @oninput="KeyboardEventHandler" @bind-value="newMessage.Content" aria-describedby="emailHelp" placeholder="Enter Message" style="width: 100%;">
+                        </div>
+                        <div class="dropdown">
+                            <div class="btn-group dropup">
+                                <button type="button" class="btn custom-button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fa fa-ellipsis-v" aria-hidden="true" style="font-size: 26px;
+                             color: #262626ff;"></i>
+                                </button>
+                                <ul class="dropdown-menu" style="min-width: 0rem;padding: .5rem .5rem;">
+                                    <li>
+                                        <div class="document-icon mb-2">
+                                            <ImageUpload OnChange="UploadImageUrl" />
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="document-icon">
+                                            <PdfUpload OnChange="UploadPdfUrl" />
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn custom-button"> <i class="fa fa-paper-plane-o" style="font-size:24px;" aria-hidden="true"></i></button>
+
                     </div>
 
-                    <button type="submit" class="btn custom-button"> <i class="fa fa-paper-plane-o" style="font-size:24px;" aria-hidden="true"></i></button>
 
+                </form>
+            }
+
+
+            @if (!audioService.IsRecording)
+            {
+                <div class="voice-icon-holder" @onclick="StartRecording">
+                    <i class="fa fa-microphone-slash" style="font-size:25px;" aria-hidden="true"></i>
                 </div>
+            }
+            else
+            {
+                <div class="voice-icon-holder" @onclick="StopRecording">
+                    @if (IsVoiceLoading)
+                    {
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <i class="fa fa-microphone" style="font-size:25px;color:#FF8642;" aria-hidden="true"></i>
 
+                    }
+                </div>
+            }
 
-            </form>
 
         </div>
 
